@@ -1,5 +1,6 @@
 package com.shiftm.shiftm.domain.leave.domain;
 
+import com.shiftm.shiftm.domain.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,4 +22,12 @@ public class Leave {
 
     @Column(nullable = false)
     private LocalDate expirationDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private LeaveType leaveType;
 }

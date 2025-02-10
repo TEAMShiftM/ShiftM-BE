@@ -1,6 +1,8 @@
 package com.shiftm.shiftm.domain.leaverequest.domain;
 
+import com.shiftm.shiftm.domain.leave.domain.Leave;
 import com.shiftm.shiftm.domain.leaverequest.domain.enums.Status;
+import com.shiftm.shiftm.domain.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,4 +28,12 @@ public class LeaveRequest {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "leave_id")
+    private Leave leave;
 }

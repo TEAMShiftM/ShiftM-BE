@@ -1,5 +1,6 @@
 package com.shiftm.shiftm.domain.shift.domain;
 
+import com.shiftm.shiftm.domain.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,4 +20,8 @@ public class Shift {
 
     @Embedded
     private Checkout checkout;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 }

@@ -1,5 +1,6 @@
 package com.shiftm.shiftm.domain.objection.domain;
 
+import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.objection.domain.enums.Status;
 import com.shiftm.shiftm.domain.objection.domain.enums.Type;
 import jakarta.persistence.*;
@@ -21,9 +22,16 @@ public class Objection {
     private Type type;
 
     @Column(nullable = false)
+    private Long typeId;
+
+    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 }
