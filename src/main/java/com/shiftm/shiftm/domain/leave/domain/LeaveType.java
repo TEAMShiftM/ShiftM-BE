@@ -5,20 +5,15 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "leaves")
+@Table(name = "leave_types")
 @Entity
-public class Leave {
+public class LeaveType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private Integer count;
-
-    @Column(nullable = false)
-    private LocalDate expirationDate;
+    private String name;
 }
