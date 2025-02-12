@@ -5,7 +5,8 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
     /* COMMON ERROR */
-    INTERNAL_SERVER_ERROR(500, "COMMON001", "Internal Server Error");
+    INTERNAL_SERVER_ERROR(500, "COMMON001", "Internal Server Error"),
+    INVALID_INPUT_VALUE(400, "COMMON002", "Invalid Input Value");
 
     private final int status;
     private final String code;
