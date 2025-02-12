@@ -4,6 +4,8 @@ import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.domain.enums.Role;
 import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
 import com.shiftm.shiftm.domain.member.dto.response.MemberResponse;
+import com.shiftm.shiftm.domain.member.exception.DuplicatedEmailException;
+import com.shiftm.shiftm.domain.member.exception.DuplicatedIdException;
 import com.shiftm.shiftm.domain.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,14 @@ public class MemberService {
 
     @Transactional
     public MemberResponse signUp(final SignUpRequest requestDto) {
+        if (memberRepository.existsById(requestDto.id())) {
+            throw new DuplicatedIdException(requestDto.id());
+        }
+
+        if (memberRepository.existsByEmail(requestDto.email())) {
+            throw new DuplicatedEmailException(requestDto.email());
+        }
+
         String password = passwordEncoder.encode(requestDto.password());
         Member member = memberRepository.save(requestDto.toEntity(password, Role.USER));
 
