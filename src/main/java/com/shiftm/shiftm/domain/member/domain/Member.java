@@ -5,6 +5,7 @@ import com.shiftm.shiftm.domain.member.domain.enums.Role;
 import com.shiftm.shiftm.domain.member.domain.enums.Status;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -44,4 +45,17 @@ public class Member {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Builder
+    public Member(String id, String password, String email,
+                  String name, LocalDate birthDate, Gender gender, Status status, Role role) {
+        this.id = id;
+        this.password = password;
+        this.email = email;
+        this.name = name;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.status = status;
+        this.role = role;
+    }
 }
