@@ -47,8 +47,14 @@ public class Member {
     private Role role;
 
     @Builder
-    public Member(String id, String password, String email,
-                  String name, LocalDate birthDate, Gender gender, Status status, Role role) {
+    public Member(final String id,
+                  final String password,
+                  final String email,
+                  final String name,
+                  final LocalDate birthDate,
+                  final Gender gender,
+                  final Status status,
+                  final Role role) {
         this.id = id;
         this.password = password;
         this.email = email;
