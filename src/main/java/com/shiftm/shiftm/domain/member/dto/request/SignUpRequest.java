@@ -17,7 +17,7 @@ public record SignUpRequest(
         String password,
         @NotBlank
         String companyId,
-        @Pattern(regexp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+        @NotBlank
         String email,
         @NotBlank
         String name,
