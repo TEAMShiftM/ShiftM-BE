@@ -1,5 +1,6 @@
 package com.shiftm.shiftm.domain.member.api;
 
+import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
 import com.shiftm.shiftm.domain.member.dto.response.MemberResponse;
 import com.shiftm.shiftm.domain.member.service.MemberService;
@@ -18,6 +19,7 @@ public class MemberController {
 
     @PostMapping("/signup")
     public MemberResponse signUp(@Valid @RequestBody final SignUpRequest requestDto) {
-        return memberService.signUp(requestDto);
+        final Member member = memberService.signUp(requestDto);
+        return new MemberResponse(member);
     }
 }

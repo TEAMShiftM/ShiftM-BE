@@ -47,15 +47,15 @@ public class MemberServiceTest extends UnitTest {
         when(memberRepository.save(any())).thenReturn(member);
 
         // when
-        final MemberResponse responseDto = memberService.signUp(requestDto);
+        final Member signUpMember = memberService.signUp(requestDto);
 
         // then
-        assertThat(responseDto).isNotNull();
-        assertThat(responseDto.id()).isEqualTo(member.getId());
-        assertThat(responseDto.email()).isEqualTo(member.getEmail());
-        assertThat(responseDto.name()).isEqualTo(member.getName());
-        assertThat(responseDto.birthDate()).isEqualTo(member.getBirthDate());
-        assertThat(responseDto.gender()).isEqualTo(member.getGender());
+        assertThat(signUpMember).isNotNull();
+        assertThat(signUpMember.getId()).isEqualTo(member.getId());
+        assertThat(signUpMember.getEmail()).isEqualTo(member.getEmail());
+        assertThat(signUpMember.getName()).isEqualTo(member.getName());
+        assertThat(signUpMember.getBirthDate()).isEqualTo(member.getBirthDate());
+        assertThat(signUpMember.getGender()).isEqualTo(member.getGender());
     }
 
     @Test
