@@ -17,6 +17,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // TODO : companyId 유효성 검사 추가
     @Transactional
     public Member signUp(final SignUpRequest requestDto) {
         if (memberRepository.existsById(requestDto.id())) {

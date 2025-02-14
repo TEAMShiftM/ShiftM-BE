@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 
+// TODO : email 필드 유효성 검사 추가
 public record SignUpRequest(
         @Pattern(regexp = "^[a-z0-9_-]{5,15}$")
         String id,
