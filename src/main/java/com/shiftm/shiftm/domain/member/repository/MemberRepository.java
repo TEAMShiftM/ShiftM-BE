@@ -1,4 +1,8 @@
 package com.shiftm.shiftm.domain.member.repository;
 
-public interface MemberRepository {
+import com.shiftm.shiftm.domain.member.domain.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MemberRepository extends JpaRepository<Member, String> {
+    boolean existsByEmail(final String email);
 }
