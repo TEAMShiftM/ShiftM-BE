@@ -13,7 +13,8 @@ public enum ErrorCode {
     DUPLICATED_EMAIL(400, "MEM002", "It Is Duplicated Email"),
 
     /* LEAVE TYPE ERROR */
-    DUPLICATED_NAME(400, "LVT001", "It Is Duplicated Name");
+    DUPLICATED_NAME(400, "LVT001", "It Is Duplicated Name"),
+    NOT_FOUND_LEAVE_TYPE(404, "LVT002", "Leave type not found");
 
     private final int status;
     private final String code;
