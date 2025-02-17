@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class LeaveTypeService {
@@ -28,6 +30,11 @@ public class LeaveTypeService {
 
         leaveType.updateName(requestDto.name());
         return leaveType;
+    }
+
+    @Transactional(readOnly = true)
+    public List<LeaveType> getLeaveTypes() {
+        return leaveTypeRepository.findAll();
     }
 
     private void validateName(String name) {
