@@ -6,8 +6,10 @@ import com.shiftm.shiftm.domain.auth.exception.InvalidPasswordException;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
 import com.shiftm.shiftm.global.auth.jwt.JwtGenerator;
+import com.shiftm.shiftm.infra.redis.RedisService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +17,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
     private final MemberDao memberDao;
-    private final JwtGenerator jwtGenerator;
     private final PasswordEncoder passwordEncoder;
+    private final JwtGenerator jwtGenerator;
+    private final RedisService redisService;
+
+    @Value("${security.jwt.token.refresh-token-expiration-time}")
+    private long refreshTokenExpirationTime;
 
     @Transactional
     public TokenResponse login(final LoginRequest loginRequest) {
@@ -24,6 +30,7 @@ public class AuthService {
 
         final TokenResponse tokenResponse = generateToken(loginRequest.id());
 
+        saveRefreshToken(loginRequest.id(), tokenResponse.refreshToken());
         return new TokenResponse("accessToken", "refreshToken");
     }
 
@@ -42,5 +49,10 @@ public class AuthService {
         final String refreshToken = jwtGenerator.generateRefreshToken(member.getId());
 
         return new TokenResponse(accessToken, refreshToken);
+    }
+
+    private void saveRefreshToken(final String memberId, final String refreshToken) {
+        final String key = "REFRESH_TOKEN:" + memberId;
+        redisService.saveValue(memberId, refreshToken, refreshTokenExpirationTime);
     }
 }
