@@ -15,7 +15,11 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(400, "MEM003", "Member Not Found"),
 
     /* AUTH ERROR */
-    INVALID_PASSWORD(400, "AUTH001", "It Is Invalid Password");
+    INVALID_PASSWORD(400, "AUTH001", "It Is Invalid Password"),
+    INVALID_TOKEN(400, "AUTH002", "It Is Invalid Token"),
+    INVALID_BEARER_PREFIX(400, "AUTH003", "It Is Invalid Bearer Prefix"),
+    UNAUTHORIZED(401, "AUTH004", "Unauthorized, Please Login"),
+    FORBIDDEN(403, "AUTH005", "Forbidden, You Don't Have Any Authority");
 
     private final int status;
     private final String code;
