@@ -50,6 +50,11 @@ public class AuthService {
         return tokenResponse;
     }
 
+    @Transactional
+    public void logout(final String memberId) {
+        deleteRefreshToken(memberId);
+    }
+
     private void authenticateMember(final String id, final String password) {
         final Member member = memberDao.findById(id);
 
@@ -82,5 +87,10 @@ public class AuthService {
         if (!refreshToken.equals(storedRefreshToken)) {
             throw new InvalidTokenException();
         }
+    }
+
+    private void deleteRefreshToken(final String memberId) {
+        final String key = "REFRESH_TOKEN:" + memberId;
+        redisService.deleteValue(key);
     }
 }
