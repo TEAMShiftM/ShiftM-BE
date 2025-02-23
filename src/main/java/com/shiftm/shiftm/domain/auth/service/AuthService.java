@@ -3,9 +3,11 @@ package com.shiftm.shiftm.domain.auth.service;
 import com.shiftm.shiftm.domain.auth.dto.request.LoginRequest;
 import com.shiftm.shiftm.domain.auth.dto.response.TokenResponse;
 import com.shiftm.shiftm.domain.auth.exception.InvalidPasswordException;
+import com.shiftm.shiftm.domain.auth.exception.InvalidTokenException;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
 import com.shiftm.shiftm.global.auth.jwt.JwtGenerator;
+import com.shiftm.shiftm.global.auth.jwt.JwtValidator;
 import com.shiftm.shiftm.infra.redis.RedisService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class AuthService {
     private final MemberDao memberDao;
     private final PasswordEncoder passwordEncoder;
     private final JwtGenerator jwtGenerator;
+    private final JwtValidator jwtValidator;
     private final RedisService redisService;
 
     @Value("${security.jwt.token.refresh-token-expiration-time}")
@@ -31,10 +34,19 @@ public class AuthService {
         final TokenResponse tokenResponse = generateToken(loginRequest.id());
 
         saveRefreshToken(loginRequest.id(), tokenResponse.refreshToken());
+
         return new TokenResponse("accessToken", "refreshToken");
     }
 
+    @Transactional
     public TokenResponse reissue(final String refreshToken) {
+        validateRefreshToken(refreshToken);
+
+        final String memberId = jwtValidator.getSubject(refreshToken);
+        final TokenResponse tokenResponse = generateToken(memberId);
+
+        saveRefreshToken(memberId, tokenResponse.refreshToken());
+
         return new TokenResponse("accessToken", "refreshToken");
     }
 
@@ -58,5 +70,17 @@ public class AuthService {
     private void saveRefreshToken(final String memberId, final String refreshToken) {
         final String key = "REFRESH_TOKEN:" + memberId;
         redisService.saveValue(memberId, refreshToken, refreshTokenExpirationTime);
+    }
+
+    private void validateRefreshToken(final String refreshToken) {
+        jwtValidator.validateToken(refreshToken);
+
+        final String memberId = jwtValidator.getSubject(refreshToken);
+
+        final String storedRefreshToken = redisService.getValue(memberId);
+
+        if (!refreshToken.equals(storedRefreshToken)) {
+            throw new InvalidTokenException();
+        }
     }
 }
