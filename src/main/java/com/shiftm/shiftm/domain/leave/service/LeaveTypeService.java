@@ -18,16 +18,15 @@ public class LeaveTypeService {
     private final LeaveTypeRepository leaveTypeRepository;
 
     @Transactional
-    public LeaveType createLeaveType(LeaveTypeRequest requestDto) {
+    public LeaveType createLeaveType(final LeaveTypeRequest requestDto) {
         validateName(requestDto.name());
         return leaveTypeRepository.save(new LeaveType(requestDto.name()));
     }
 
     @Transactional
-    public LeaveType updateLeaveType(Long leaveTypeId, LeaveTypeRequest requestDto) {
-        LeaveType leaveType = findById(leaveTypeId);
+    public LeaveType updateLeaveType(final Long leaveTypeId, final LeaveTypeRequest requestDto) {
+        final LeaveType leaveType = findById(leaveTypeId);
         validateName(requestDto.name());
-
         leaveType.updateName(requestDto.name());
         return leaveType;
     }
@@ -37,14 +36,13 @@ public class LeaveTypeService {
         return leaveTypeRepository.findAll();
     }
 
-    private void validateName(String name) {
+    private void validateName(final String name) {
         if (leaveTypeRepository.existsByName(name)) {
             throw new DuplicatedNameException(name);
         }
     }
 
-    private LeaveType findById(Long id) {
+    private LeaveType findById(final Long id) {
         return leaveTypeRepository.findById(id).orElseThrow(() -> new NotFoundLeaveTypeException());
     }
-
 }

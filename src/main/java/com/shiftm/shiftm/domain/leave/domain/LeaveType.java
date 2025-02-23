@@ -19,11 +19,11 @@ public class LeaveType {
     private String name;
 
     @Builder
-    public LeaveType(String name) {
+    public LeaveType(final String name) {
         this.name = name;
     }
 
-    public void updateName(String name) {
+    public void updateName(final String name) {
         this.name = name;
     }
 }

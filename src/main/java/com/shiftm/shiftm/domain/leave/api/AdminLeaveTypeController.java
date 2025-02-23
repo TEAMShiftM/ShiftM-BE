@@ -22,7 +22,7 @@ public class AdminLeaveTypeController {
     }
 
     @PatchMapping("/{leaveTypeId}")
-    public LeaveTypeResponse updateLeaveType(@PathVariable(name = "leaveTypeId") Long leaveTypeId,
+    public LeaveTypeResponse updateLeaveType(@PathVariable(name = "leaveTypeId") final Long leaveTypeId,
                                                 @Valid @RequestBody final LeaveTypeRequest requestDto) {
         final LeaveType leaveType = leaveTypeService.updateLeaveType(leaveTypeId, requestDto);
         return new LeaveTypeResponse(leaveType);
