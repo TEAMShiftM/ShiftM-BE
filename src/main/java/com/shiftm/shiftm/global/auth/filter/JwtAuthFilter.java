@@ -3,6 +3,7 @@ package com.shiftm.shiftm.global.auth.filter;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
 import com.shiftm.shiftm.global.auth.jwt.JwtValidator;
+import com.shiftm.shiftm.infra.redis.RedisService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ import java.util.Collections;
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final MemberDao memberDao;
     private final JwtValidator jwtValidator;
+    private final RedisService redisService;
 
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -43,6 +45,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private void authenticate(final String accessToken) {
         final String memberId = jwtValidator.getSubject(accessToken);
+        final String storedRefreshToken = redisService.getValue(memberId);
         final Member member = memberDao.findById(memberId);
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
