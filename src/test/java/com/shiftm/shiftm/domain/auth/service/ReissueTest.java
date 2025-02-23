@@ -55,9 +55,6 @@ public class ReissueTest extends UnitTest {
         // when
         final TokenResponse responseDto = authService.reissue(refreshToken);
 
-        System.out.println(responseDto.accessToken());
-        System.out.println(responseDto.refreshToken());
-
         // then
         assertThat(responseDto).isNotNull();
         assertThat(responseDto.accessToken()).isNotNull();
