@@ -4,7 +4,6 @@ import com.shiftm.shiftm.domain.leave.domain.LeaveType;
 import com.shiftm.shiftm.domain.leave.dto.response.LeaveTypeResponse;
 import com.shiftm.shiftm.domain.leave.service.LeaveTypeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,10 +18,8 @@ public class LeaveTypeController {
     private final LeaveTypeService leaveTypeService;
 
     @GetMapping
-    public ResponseEntity<List<LeaveTypeResponse>> getLeaveTypes() {
+    public List<LeaveTypeResponse> getLeaveTypes() {
         List<LeaveType> leaveTypes = leaveTypeService.getLeaveTypes();
-        List<LeaveTypeResponse> responseDto = leaveTypes.stream().map(LeaveTypeResponse::new).toList();
-        return ResponseEntity.ok(responseDto);
+        return leaveTypes.stream().map(LeaveTypeResponse::new).toList();
     }
-
 }
