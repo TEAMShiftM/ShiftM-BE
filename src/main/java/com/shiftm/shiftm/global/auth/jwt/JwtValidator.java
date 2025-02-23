@@ -43,7 +43,7 @@ public class JwtValidator {
                 .getPayload();
     }
 
-    private String getToken(final String token) {
+    public String getToken(final String token) {
         if (!token.startsWith(BEARER)) {
             throw new InvalidBearerPrefixException();
         }

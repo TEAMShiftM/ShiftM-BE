@@ -84,7 +84,7 @@ public class AuthService {
 
         final String storedRefreshToken = redisService.getValue(memberId);
 
-        if (!refreshToken.equals(storedRefreshToken)) {
+        if (!jwtValidator.getToken(refreshToken).equals(storedRefreshToken)) {
             throw new InvalidTokenException();
         }
     }

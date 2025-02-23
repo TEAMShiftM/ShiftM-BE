@@ -27,7 +27,8 @@ public class SecurityConfig {
 
     private static final String[] whiteList = {
             "/member/signup",
-            "/auth/login"
+            "/auth/login",
+            "/auth/reissue"
     };
 
     @Bean
@@ -53,12 +54,13 @@ public class SecurityConfig {
     }
 
     @Bean
-    FilterRegistrationBean<JwtAuthFilter> registration() {
-        FilterRegistrationBean<JwtAuthFilter> registration = new FilterRegistrationBean<>();
+    FilterRegistrationBean<JwtAuthFilter> registration(JwtAuthFilter filter) {
+        FilterRegistrationBean<JwtAuthFilter> registration = new FilterRegistrationBean<>(filter);
         registration.setEnabled(false);
         return registration;
     }
 
+    @Bean
     WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
                 .requestMatchers(whiteList);
