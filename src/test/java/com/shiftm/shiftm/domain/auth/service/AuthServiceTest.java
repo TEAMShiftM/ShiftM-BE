@@ -45,6 +45,8 @@ public class AuthServiceTest extends UnitTest {
 
         when(memberDao.findById(any())).thenReturn(member);
         when(passwordEncoder.matches(any(), any())).thenReturn(true);
+        when(jwtGenerator.generateAccessToken(any(), any())).thenReturn("access_token");
+        when(jwtGenerator.generateRefreshToken(any())).thenReturn("refresh_token");
 
         // when
         final TokenResponse responseDto = authService.login(requestDto);
