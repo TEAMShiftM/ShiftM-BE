@@ -10,7 +10,11 @@ public enum ErrorCode {
 
     /* MEMBER ERROR */
     DUPLICATED_ID(400, "MEM001", "It Is Duplicated ID"),
-    DUPLICATED_EMAIL(400, "MEM002", "It Is Duplicated Email");
+    DUPLICATED_EMAIL(400, "MEM002", "It Is Duplicated Email"),
+
+    /* LEAVE TYPE ERROR */
+    DUPLICATED_NAME(400, "LVT001", "It Is Duplicated Name"),
+    NOT_FOUND_LEAVE_TYPE(404, "LVT002", "Leave type not found");
 
     private final int status;
     private final String code;
