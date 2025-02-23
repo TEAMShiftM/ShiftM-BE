@@ -36,13 +36,12 @@ class LeaveTypeServiceTest extends UnitTest {
     @DisplayName("연차 유형 생성 성공")
     @Test
     void 연차_유형_생성_성공() {
-
         // given
         final LeaveTypeRequest requestDto = new LeaveTypeRequest("연차유급휴가");
         when(leaveTypeRepository.existsByName(any())).thenReturn(false);
+        when(leaveTypeRepository.save(any())).thenReturn(leaveType);
 
         // when, then
-        when(leaveTypeRepository.save(any())).thenReturn(leaveType);
         assertEquals(leaveTypeService.createLeaveType(requestDto).getName(), "연차유급휴가");
     }
 
@@ -71,7 +70,7 @@ class LeaveTypeServiceTest extends UnitTest {
     @DisplayName("연차 유형 수정 실패 - 존재하지 않는 ID")
     @Test
     public void 연차유형_수정_실패_존재하지_않는_ID() {
-    // given
+        // given
         final LeaveTypeRequest requestDto = new LeaveTypeRequest("생리 휴가");
         when(leaveTypeRepository.findById(any())).thenReturn(Optional.empty());
 
@@ -90,6 +89,4 @@ class LeaveTypeServiceTest extends UnitTest {
         // when, then
         assertThrows(DuplicatedNameException.class, () -> leaveTypeService.updateLeaveType(null, requestDto));
     }
-
-
 }
