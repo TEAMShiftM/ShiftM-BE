@@ -35,7 +35,7 @@ public class AuthService {
 
         saveRefreshToken(loginRequest.id(), tokenResponse.refreshToken());
 
-        return new TokenResponse("accessToken", "refreshToken");
+        return tokenResponse;
     }
 
     @Transactional
@@ -47,7 +47,7 @@ public class AuthService {
 
         saveRefreshToken(memberId, tokenResponse.refreshToken());
 
-        return new TokenResponse("accessToken", "refreshToken");
+        return tokenResponse;
     }
 
     private void authenticateMember(final String id, final String password) {
