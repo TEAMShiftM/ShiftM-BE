@@ -20,7 +20,8 @@ public class LeaveTypeService {
     @Transactional
     public LeaveType createLeaveType(final LeaveTypeRequest requestDto) {
         validateName(requestDto.name());
-        return leaveTypeRepository.save(new LeaveType(requestDto.name()));
+        final LeaveType leaveType = requestDto.toEntity(requestDto.name());
+        return leaveTypeRepository.save(leaveType);
     }
 
     @Transactional
