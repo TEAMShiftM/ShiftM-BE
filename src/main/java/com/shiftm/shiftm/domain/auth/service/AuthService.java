@@ -34,6 +34,10 @@ public class AuthService {
         return new TokenResponse("accessToken", "refreshToken");
     }
 
+    public TokenResponse reissue(final String refreshToken) {
+        return new TokenResponse("accessToken", "refreshToken");
+    }
+
     private void authenticateMember(final String id, final String password) {
         final Member member = memberDao.findById(id);
 
