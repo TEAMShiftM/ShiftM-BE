@@ -29,6 +29,6 @@ public class MemberService {
         }
 
         final String password = passwordEncoder.encode(requestDto.password());
-        return memberRepository.save(requestDto.toEntity(password, Role.USER));
+        return memberRepository.save(requestDto.toEntity(password, Role.ROLE_USER));
     }
 }
