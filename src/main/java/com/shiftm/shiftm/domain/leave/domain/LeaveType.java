@@ -2,6 +2,7 @@ package com.shiftm.shiftm.domain.leave.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,15 @@ public class LeaveType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
+
+    @Builder
+    public LeaveType(final String name) {
+        this.name = name;
+    }
+
+    public void updateName(final String name) {
+        this.name = name;
+    }
 }

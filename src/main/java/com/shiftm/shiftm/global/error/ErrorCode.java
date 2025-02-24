@@ -21,6 +21,10 @@ public enum ErrorCode {
     UNAUTHORIZED(401, "AUTH004", "Unauthorized, Please Login"),
     FORBIDDEN(403, "AUTH005", "Forbidden, You Don't Have Any Authority");
 
+    /* LEAVE TYPE ERROR */
+    DUPLICATED_NAME(400, "LVT001", "It Is Duplicated Name"),
+    NOT_FOUND_LEAVE_TYPE(404, "LVT002", "Leave type not found");
+
     private final int status;
     private final String code;
     private final String message;
