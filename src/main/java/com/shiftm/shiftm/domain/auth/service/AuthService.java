@@ -74,7 +74,7 @@ public class AuthService {
 
     private void saveRefreshToken(final String memberId, final String refreshToken) {
         final String key = "REFRESH_TOKEN:" + memberId;
-        redisService.saveValue(memberId, refreshToken, refreshTokenExpirationTime);
+        redisService.saveValue(key, refreshToken, refreshTokenExpirationTime);
     }
 
     private void validateRefreshToken(final String refreshToken) {
