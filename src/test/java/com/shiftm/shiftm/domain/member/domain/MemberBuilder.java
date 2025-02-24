@@ -24,7 +24,7 @@ public class MemberBuilder {
                     .birthDate(birthDate)
                     .gender(gender)
                     .status(Status.ACTIVE)
-                    .role(Role.USER)
+                    .role(Role.ROLE_USER)
                     .build();
         }
     }

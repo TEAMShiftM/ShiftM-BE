@@ -4,7 +4,6 @@ import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.domain.MemberBuilder;
 import com.shiftm.shiftm.domain.member.dto.SignUpRequestBuilder;
 import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
-import com.shiftm.shiftm.domain.member.dto.response.MemberResponse;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedEmailException;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedIdException;
 import com.shiftm.shiftm.domain.member.repository.MemberRepository;
@@ -29,7 +28,7 @@ public class MemberServiceTest extends UnitTest {
     private MemberRepository memberRepository;
 
     @Spy
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
     private Member member;
 
     @BeforeEach
