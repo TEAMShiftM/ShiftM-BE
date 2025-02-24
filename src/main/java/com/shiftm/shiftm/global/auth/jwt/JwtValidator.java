@@ -35,20 +35,20 @@ public class JwtValidator {
         return parseToken(token).getSubject();
     }
 
-    private Claims parseToken(final String token) {
-        return Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(getToken(token))
-                .getPayload();
-    }
-
     public String getToken(final String token) {
         if (!token.startsWith(BEARER)) {
             throw new InvalidBearerPrefixException();
         }
 
         return token.substring(BEARER.length());
+    }
+
+    private Claims parseToken(final String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(getToken(token))
+                .getPayload();
     }
 
     private SecretKey getSigningKey() {
