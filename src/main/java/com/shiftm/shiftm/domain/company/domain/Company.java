@@ -39,7 +39,19 @@ public class Company {
     private Double longitude;
 
     @Builder
-    public Company(String companyId, LocalTime checkinTime, LocalTime checkoutTime, LocalTime breakStartTime, LocalTime breakEndTime, Double latitude, Double longitude) {
+    public Company(final String companyId, final LocalTime checkinTime, final LocalTime checkoutTime,
+                   final LocalTime breakStartTime, final LocalTime breakEndTime, final Double latitude, final Double longitude) {
+        this.companyId = companyId;
+        this.checkinTime = checkinTime;
+        this.checkoutTime = checkoutTime;
+        this.breakStartTime = breakStartTime;
+        this.breakEndTime = breakEndTime;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public void update(final String companyId, final LocalTime checkinTime, final LocalTime checkoutTime,
+                       final LocalTime breakStartTime, final LocalTime breakEndTime, final Double latitude, final Double longitude) {
         this.companyId = companyId;
         this.checkinTime = checkinTime;
         this.checkoutTime = checkoutTime;

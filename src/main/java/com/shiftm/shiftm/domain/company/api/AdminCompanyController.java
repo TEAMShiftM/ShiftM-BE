@@ -6,10 +6,7 @@ import com.shiftm.shiftm.domain.company.dto.response.CompanyResponse;
 import com.shiftm.shiftm.domain.company.service.CompanyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/admin/company")
@@ -21,6 +18,13 @@ public class AdminCompanyController {
     @PostMapping
     public CompanyResponse createCompany(@Valid @RequestBody final CompanyRequest requestDto) {
         final Company company = companyService.createCompany(requestDto);
+        return new CompanyResponse(company);
+    }
+
+    @PatchMapping("/{companyId}")
+    public CompanyResponse updateCompany(@PathVariable(name = "companyId") final Long companyId,
+                                         @Valid @RequestBody final CompanyRequest requestDto) {
+        final Company company = companyService.updateCompany(companyId, requestDto);
         return new CompanyResponse(company);
     }
 }

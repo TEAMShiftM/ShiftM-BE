@@ -3,6 +3,7 @@ package com.shiftm.shiftm.domain.company.service;
 import com.shiftm.shiftm.domain.company.domain.Company;
 import com.shiftm.shiftm.domain.company.dto.request.CompanyRequest;
 import com.shiftm.shiftm.domain.company.exception.DuplicatedCompanyIdException;
+import com.shiftm.shiftm.domain.company.exception.CompanyNotFoundException;
 import com.shiftm.shiftm.domain.company.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,15 @@ public class CompanyService {
         final Company company = requestDto.toEntity(requestDto.companyId(), requestDto.checkinTime(), requestDto.checkoutTime(),
                 requestDto.breakStartTime(), requestDto.breakEndTime(), requestDto.latitude(), requestDto.longitude());
         return companyRepository.save(company);
+    }
+
+    @Transactional
+    public Company updateCompany(final Long companyId, final CompanyRequest requestDto) {
+        final Company company = companyRepository.findById(companyId).orElseThrow(() -> new CompanyNotFoundException());
+        validateCompanyId(requestDto.companyId());
+        company.update(requestDto.companyId(), requestDto.checkinTime(), requestDto.checkoutTime(),
+                requestDto.breakStartTime(), requestDto.breakEndTime(), requestDto.latitude(), requestDto.longitude());
+        return company;
     }
 
     private void validateCompanyId(final String companyId) {

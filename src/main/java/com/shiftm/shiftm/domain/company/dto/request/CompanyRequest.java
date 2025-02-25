@@ -2,23 +2,24 @@ package com.shiftm.shiftm.domain.company.dto.request;
 
 import com.shiftm.shiftm.domain.company.domain.Company;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalTime;
 
 public record CompanyRequest(
         @NotBlank
         String companyId,
-        @NotBlank
+        @NotNull
         LocalTime checkinTime,
-        @NotBlank
+        @NotNull
         LocalTime checkoutTime,
-        @NotBlank
+        @NotNull
         LocalTime breakStartTime,
-        @NotBlank
+        @NotNull
         LocalTime breakEndTime,
-        @NotBlank
+        @NotNull
         Double latitude,
-        @NotBlank
+        @NotNull
         Double longitude
 ) {
     public Company toEntity(final String companyId, final LocalTime checkinTime, final LocalTime checkoutTime,
