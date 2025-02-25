@@ -31,7 +31,8 @@ public class AdminCompanyController {
     }
 
     @GetMapping("/{companyId}")
-    public Company getCompany(@PathVariable(name = "companyId") final Long companyId) {
-       return companyService.getCompany(companyId);
+    public CompanyResponse getCompany(@PathVariable(name = "companyId") final Long companyId) {
+       final Company company = companyService.getCompany(companyId);
+        return new CompanyResponse(company);
     }
 }
