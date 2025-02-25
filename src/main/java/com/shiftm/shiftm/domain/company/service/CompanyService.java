@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @RequiredArgsConstructor
 @Service
 public class CompanyService {
@@ -25,16 +26,25 @@ public class CompanyService {
 
     @Transactional
     public Company updateCompany(final Long companyId, final CompanyRequest requestDto) {
-        final Company company = companyRepository.findById(companyId).orElseThrow(() -> new CompanyNotFoundException());
+        final Company company = findById(companyId);
         validateCompanyId(requestDto.companyId());
         company.update(requestDto.companyId(), requestDto.checkinTime(), requestDto.checkoutTime(),
                 requestDto.breakStartTime(), requestDto.breakEndTime(), requestDto.latitude(), requestDto.longitude());
         return company;
     }
 
+    @Transactional(readOnly = true)
+    public Company getCompany(final Long companyId) {
+        return findById(companyId);
+    }
+
     private void validateCompanyId(final String companyId) {
         if (companyRepository.existsByCompanyId(companyId)) {
             throw new DuplicatedCompanyIdException(companyId);
         }
+    }
+
+    private Company findById(Long companyId) {
+        return companyRepository.findById(companyId).orElseThrow(() -> new CompanyNotFoundException());
     }
 }

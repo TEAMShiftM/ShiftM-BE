@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RequestMapping("/admin/company")
 @RestController
@@ -26,5 +28,10 @@ public class AdminCompanyController {
                                          @Valid @RequestBody final CompanyRequest requestDto) {
         final Company company = companyService.updateCompany(companyId, requestDto);
         return new CompanyResponse(company);
+    }
+
+    @GetMapping("/{companyId}")
+    public Company getCompany(@PathVariable(name = "companyId") final Long companyId) {
+       return companyService.getCompany(companyId);
     }
 }
