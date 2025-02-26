@@ -19,7 +19,7 @@ public enum ErrorCode {
     INVALID_TOKEN(400, "AUTH002", "It Is Invalid Token"),
     INVALID_BEARER_PREFIX(400, "AUTH003", "It Is Invalid Bearer Prefix"),
     UNAUTHORIZED(401, "AUTH004", "Unauthorized, Please Login"),
-    FORBIDDEN(403, "AUTH005", "Forbidden, You Don't Have Any Authority");
+    FORBIDDEN(403, "AUTH005", "Forbidden, You Don't Have Any Authority"),
 
     /* LEAVE TYPE ERROR */
     DUPLICATED_NAME(400, "LVT001", "It Is Duplicated Name"),
