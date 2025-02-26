@@ -45,7 +45,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private void authenticate(final String accessToken) {
         final String memberId = jwtValidator.getSubject(accessToken);
-        final String storedRefreshToken = redisService.getValue(memberId);
+        final String storedRefreshToken = redisService.getValue("REFRESH_TOKEN:" + memberId);
         final Member member = memberDao.findById(memberId);
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
