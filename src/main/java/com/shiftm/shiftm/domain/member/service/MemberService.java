@@ -31,4 +31,8 @@ public class MemberService {
         final String password = passwordEncoder.encode(requestDto.password());
         return memberRepository.save(requestDto.toEntity(password, Role.ROLE_USER));
     }
+
+    public Member getProfile(final String memberId) {
+
+    }
 }
