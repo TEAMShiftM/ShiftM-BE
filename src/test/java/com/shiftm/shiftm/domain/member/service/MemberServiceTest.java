@@ -6,6 +6,7 @@ import com.shiftm.shiftm.domain.member.dto.SignUpRequestBuilder;
 import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedEmailException;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedIdException;
+import com.shiftm.shiftm.domain.member.repository.MemberDao;
 import com.shiftm.shiftm.domain.member.repository.MemberRepository;
 import com.shiftm.shiftm.test.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,9 @@ public class MemberServiceTest extends UnitTest {
 
     @Mock
     private MemberRepository memberRepository;
+
+    @Mock
+    private MemberDao memberDao;
 
     @Spy
     private PasswordEncoder passwordEncoder;
@@ -78,5 +82,22 @@ public class MemberServiceTest extends UnitTest {
 
         // when, then
         assertThrows(DuplicatedEmailException.class, () -> memberService.signUp(requestDto));
+    }
+
+    @Test
+    public void 프로필_조회_성공() {
+        // given
+        when(memberDao.findById(any())).thenReturn(member);
+
+        // when
+        final Member profileMember = memberService.getProfile(member.getId());
+
+        // then
+        assertThat(profileMember).isNotNull();
+        assertThat(profileMember.getId()).isEqualTo(member.getId());
+        assertThat(profileMember.getEmail()).isEqualTo(member.getEmail());
+        assertThat(profileMember.getName()).isEqualTo(member.getName());
+        assertThat(profileMember.getBirthDate()).isEqualTo(member.getBirthDate());
+        assertThat(profileMember.getGender()).isEqualTo(member.getGender());
     }
 }
