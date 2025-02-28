@@ -23,7 +23,10 @@ public enum ErrorCode {
 
     /* LEAVE TYPE ERROR */
     DUPLICATED_NAME(400, "LVT001", "It Is Duplicated Name"),
-    NOT_FOUND_LEAVE_TYPE(404, "LVT002", "Leave type not found");
+    NOT_FOUND_LEAVE_TYPE(404, "LVT002", "Leave type not found"),
+
+    /* EMAIL ERROR */
+    UNABLE_TO_SEND_EMAIL(500, "EMAIL001", "Unable To Send Email");
 
     private final int status;
     private final String code;
