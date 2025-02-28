@@ -36,7 +36,7 @@ public class MemberService {
 
     @Transactional
     public boolean isUniqueId(final String id) {
-        return memberRepository.existsById(id);
+        return !memberRepository.existsById(id);
     }
 
     public Member getProfile(final String memberId) {
