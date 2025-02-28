@@ -34,6 +34,11 @@ public class MemberService {
         return memberRepository.save(requestDto.toEntity(password, Role.ROLE_USER));
     }
 
+    @Transactional
+    public boolean isUniqueId(final String id) {
+        return true;
+    }
+
     public Member getProfile(final String memberId) {
         return memberDao.findById(memberId);
     }
