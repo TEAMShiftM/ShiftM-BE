@@ -19,8 +19,7 @@ public class CompanyService {
     @Transactional
     public Company createCompany(final CompanyRequest requestDto) {
         validateCompanyId(requestDto.companyId());
-        final Company company = requestDto.toEntity(requestDto.companyId(), requestDto.checkinTime(), requestDto.checkoutTime(),
-                requestDto.breakStartTime(), requestDto.breakEndTime(), requestDto.latitude(), requestDto.longitude());
+        final Company company = requestDto.toEntity();
         return companyRepository.save(company);
     }
 

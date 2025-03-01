@@ -22,8 +22,7 @@ public record CompanyRequest(
         @NotNull
         Double longitude
 ) {
-    public Company toEntity(final String companyId, final LocalTime checkinTime, final LocalTime checkoutTime,
-                            final LocalTime breakStartTime, final LocalTime breakEndTime, final Double latitude, final Double longitude) {
+    public Company toEntity() {
         return Company.builder()
                 .companyId(companyId)
                 .checkinTime(checkinTime)
