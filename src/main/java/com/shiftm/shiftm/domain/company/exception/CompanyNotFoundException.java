@@ -6,6 +6,6 @@ import com.shiftm.shiftm.global.error.exception.EntityNotFoundException;
 public class CompanyNotFoundException extends EntityNotFoundException {
 
     public CompanyNotFoundException() {
-        super("Company Is Not Found", ErrorCode.COMPANY_NOT_FOUND);
+        super(ErrorCode.COMPANY_NOT_FOUND.getMessage(), ErrorCode.COMPANY_NOT_FOUND);
     }
 }
