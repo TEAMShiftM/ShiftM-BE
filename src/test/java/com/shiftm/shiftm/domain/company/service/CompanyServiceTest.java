@@ -39,13 +39,13 @@ class CompanyServiceTest extends UnitTest {
     @DisplayName("회사 생성 성공")
     @Test
     void 회사_생성_성공() {
-        //given
+        // given
         final CompanyRequest requestDto = CompanyRequestBuilder.build();
 
         when(companyRepository.existsByCompanyId(any())).thenReturn(false);
         when(companyRepository.save(any())).thenReturn(company);
 
-        //when
+        // when
         final Company createCompany = companyService.createCompany(requestDto);
 
         //then
@@ -62,26 +62,28 @@ class CompanyServiceTest extends UnitTest {
     @DisplayName(("회사 생성 실패 - 이름 중복"))
     @Test
     public void 회사_생성_실패_이름_중복 () {
-        //given
+        // given
         final CompanyRequest requestDto = CompanyRequestBuilder.build();
+
         when(companyRepository.existsByCompanyId(any())).thenReturn(true);
 
-        //when, then
+        // when, then
         assertThrows(DuplicatedCompanyIdException.class, () -> companyService.createCompany(requestDto));
     }
 
     @DisplayName("회사 수정 성공")
     @Test
     void 회사_수정_성공() {
-        //given
+        // given
         final CompanyRequest requestDto = new CompanyRequest("shift", LocalTime.of(0, 0), LocalTime.of(0, 0),
                 LocalTime.of(0, 0), LocalTime.of(0, 0), 0.0, 0.0);
+
         when(companyRepository.findById(any())).thenReturn(Optional.of(company));
 
-        //when
+        // when
         final Company updateCompany = companyService.updateCompany(null, requestDto);
 
-        //then
+        // then
         assertThat(updateCompany).isNotNull();
         assertThat(updateCompany.getCompanyId()).isEqualTo("shift");
         assertThat(updateCompany.getCheckinTime()).isEqualTo(LocalTime.of(0, 0));
@@ -95,38 +97,40 @@ class CompanyServiceTest extends UnitTest {
     @DisplayName("회사 수정 실패 - 이름 중복")
     @Test
     public void 회사_수정_실패_이름_중복 () {
-        //given
+        // given
         final CompanyRequest requestDto = new CompanyRequest("shiftm", LocalTime.of(0, 0), LocalTime.of(0, 0),
                 LocalTime.of(0, 0), LocalTime.of(0, 0), 0.0, 0.0);
+
         when(companyRepository.findById(any())).thenReturn(Optional.of(company));
         when(companyRepository.existsByCompanyId(any())).thenReturn(true);
 
-        //when, then
+        // when, then
         assertThrows(DuplicatedCompanyIdException.class, () -> companyService.updateCompany(null, requestDto));
     }
 
     @DisplayName("회사 수정 실패 - 존재하지 않는 회사ID")
     @Test
     public void 회사_수정_실패_존재하지_않는_회사ID() {
-        //given
+        // given
         final CompanyRequest requestDto = new CompanyRequest("shift", LocalTime.of(0, 0), LocalTime.of(0, 0),
                 LocalTime.of(0, 0), LocalTime.of(0, 0), 0.0, 0.0);
+
         when(companyRepository.findById(any())).thenReturn(Optional.empty());
 
-        //when, then
+        // when, then
         assertThrows(CompanyNotFoundException.class, () -> companyService.updateCompany(100L, requestDto));
     }
 
     @DisplayName("회사 조회 성공")
     @Test
     public void 회사_조회_성공() {
-        //given
+        // given
         when(companyRepository.findById(any())).thenReturn(Optional.of(company));
 
-        //when
+        // when
         final Company getCompany = companyService.getCompany(null);
 
-        //then
+        // then
         assertThat(getCompany).isNotNull();
         assertThat(getCompany.getCompanyId()).isEqualTo(company.getCompanyId());
         assertThat(getCompany.getCheckinTime()).isEqualTo(company.getCheckinTime());
@@ -140,10 +144,10 @@ class CompanyServiceTest extends UnitTest {
     @DisplayName("회사 조회 실패 - 존재하지 않는 회사ID")
     @Test
     public void 회사_조회_실패_존재하지_않는_회사ID() {
-        //given
+        // given
         when(companyRepository.findById(any())).thenReturn(Optional.empty());
 
-        //when, then
+        // when, then
         assertThrows(CompanyNotFoundException.class, () -> companyService.getCompany(null));
     }
 }
