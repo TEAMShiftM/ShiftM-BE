@@ -3,6 +3,7 @@ package com.shiftm.shiftm.domain.member.service;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.domain.enums.Role;
 import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
+import com.shiftm.shiftm.domain.member.dto.request.VerifyEmailCodeRequest;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedEmailException;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedIdException;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
@@ -57,6 +58,11 @@ public class MemberService {
 
         final String mailMessage = createMailMessage("ShiftM 이메일 인증 번호", "아래 인증 번호로 이메일 인증을 해주세요.", verificationCode);
         mailSender.sendMail(email, "[ShiftM] 이메일 인증 번호", mailMessage);
+    }
+
+    @Transactional
+    public boolean verifyEmailCode(final VerifyEmailCodeRequest requestDto) {
+        return true;
     }
 
     @Transactional

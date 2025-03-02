@@ -2,6 +2,7 @@ package com.shiftm.shiftm.domain.member.api;
 
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
+import com.shiftm.shiftm.domain.member.dto.request.VerifyEmailCodeRequest;
 import com.shiftm.shiftm.domain.member.dto.response.CheckResponse;
 import com.shiftm.shiftm.domain.member.dto.response.MemberResponse;
 import com.shiftm.shiftm.domain.member.service.MemberService;
@@ -31,6 +32,12 @@ public class MemberController {
     @PostMapping("/check/email")
     public void sendEmailVerificationCode(@RequestParam final String email) {
         memberService.sendEmailVerificationCode(email);
+    }
+
+    @GetMapping("/check/email/code")
+    public CheckResponse verifyEmailCode(@Valid @RequestBody final VerifyEmailCodeRequest requestDto) {
+        final boolean isVerified = memberService.verifyEmailCode(requestDto);
+        return new CheckResponse(isVerified);
     }
 
     @GetMapping("/me")
