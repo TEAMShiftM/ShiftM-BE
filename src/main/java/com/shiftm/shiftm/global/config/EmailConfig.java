@@ -48,9 +48,9 @@ public class EmailConfig {
     private Properties getMailProperties() {
         Properties properties = new Properties();
 
-        properties.put("mail.stmp.auth", auth);
-        properties.put("mail.stmp.starttls.enable", starttlsEnable);
-        properties.put("mail.stmp.starttls.required", starttlsRequired);
+        properties.put("mail.smtp.auth", auth);
+        properties.put("mail.smtp.starttls.enable", starttlsEnable);
+        properties.put("mail.smtp.starttls.required", starttlsRequired);
 
         return properties;
     }

@@ -18,6 +18,7 @@ public class MailSender {
             MimeMessage mailMessage = createMailMessage(to, title, text);
             javaMailSender.send(mailMessage);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new UnableToSendEmailException();
         }
     }
@@ -28,7 +29,7 @@ public class MailSender {
 
         helper.setTo(to);
         helper.setSubject(title);
-        helper.setText(text);
+        helper.setText(text, true);
 
         return mailMessage;
     }
