@@ -26,7 +26,6 @@ public class CompanyService {
     @Transactional
     public Company updateCompany(final Long companyId, final CompanyRequest requestDto) {
         final Company company = findById(companyId);
-        checkCompanyExists();
         company.update(requestDto.companyId(), requestDto.checkinTime(), requestDto.checkoutTime(),
                 requestDto.breakStartTime(), requestDto.breakEndTime(), requestDto.latitude(), requestDto.longitude());
         return company;

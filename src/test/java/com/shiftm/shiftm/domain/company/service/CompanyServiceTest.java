@@ -59,7 +59,7 @@ class CompanyServiceTest extends UnitTest {
         assertThat(createCompany.getLongitude()).isEqualTo(company.getLongitude());
     }
 
-    @DisplayName(("회사 생성 실패 - 이미 존재"))
+    @DisplayName(("회사 생성 실패 - 이미 생성한 회사"))
     @Test
     public void 회사_생성_실패_이미_존재 () {
         // given
@@ -92,20 +92,6 @@ class CompanyServiceTest extends UnitTest {
         assertThat(updateCompany.getBreakEndTime()).isEqualTo(LocalTime.of(0, 0));
         assertThat(updateCompany.getLatitude()).isEqualTo(0.0);
         assertThat(updateCompany.getLongitude()).isEqualTo(0.0);
-    }
-
-    @DisplayName("회사 수정 실패 - 이미 존재")
-    @Test
-    public void 회사_수정_실패_이미_존재 () {
-        // given
-        final CompanyRequest requestDto = new CompanyRequest("shiftm", LocalTime.of(0, 0), LocalTime.of(0, 0),
-                LocalTime.of(0, 0), LocalTime.of(0, 0), 0.0, 0.0);
-
-        when(companyRepository.findById(any())).thenReturn(Optional.of(company));
-        when(companyRepository.exists()).thenReturn(true);
-
-        // when, then
-        assertThrows(CompanyAlreadyExistsException.class, () -> companyService.updateCompany(null, requestDto));
     }
 
     @DisplayName("회사 수정 실패 - 존재하지 않는 회사ID")
