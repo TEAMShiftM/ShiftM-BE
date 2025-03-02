@@ -2,7 +2,7 @@ package com.shiftm.shiftm.domain.company.service;
 
 import com.shiftm.shiftm.domain.company.domain.Company;
 import com.shiftm.shiftm.domain.company.dto.request.CompanyRequest;
-import com.shiftm.shiftm.domain.company.exception.DuplicatedCompanyIdException;
+import com.shiftm.shiftm.domain.company.exception.CompanyAlreadyExistsException;
 import com.shiftm.shiftm.domain.company.exception.CompanyNotFoundException;
 import com.shiftm.shiftm.domain.company.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class CompanyService {
 
     @Transactional
     public Company createCompany(final CompanyRequest requestDto) {
-        validateCompanyId(requestDto.companyId());
+        checkCompanyExists();
         final Company company = requestDto.toEntity();
         return companyRepository.save(company);
     }
@@ -26,7 +26,7 @@ public class CompanyService {
     @Transactional
     public Company updateCompany(final Long companyId, final CompanyRequest requestDto) {
         final Company company = findById(companyId);
-        validateCompanyId(requestDto.companyId());
+        checkCompanyExists();
         company.update(requestDto.companyId(), requestDto.checkinTime(), requestDto.checkoutTime(),
                 requestDto.breakStartTime(), requestDto.breakEndTime(), requestDto.latitude(), requestDto.longitude());
         return company;
@@ -37,13 +37,13 @@ public class CompanyService {
         return findById(companyId);
     }
 
-    private void validateCompanyId(final String companyId) {
-        if (companyRepository.existsByCompanyId(companyId)) {
-            throw new DuplicatedCompanyIdException(companyId);
+    private void checkCompanyExists() {
+        if (companyRepository.exists()) {
+            throw new CompanyAlreadyExistsException();
         }
     }
 
-    private Company findById(Long companyId) {
+    private Company findById(final Long companyId) {
         return companyRepository.findById(companyId).orElseThrow(() -> new CompanyNotFoundException());
     }
 }

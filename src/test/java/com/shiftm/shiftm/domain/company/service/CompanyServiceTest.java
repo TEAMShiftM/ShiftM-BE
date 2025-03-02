@@ -5,7 +5,7 @@ import com.shiftm.shiftm.domain.company.domain.CompanyBuilder;
 import com.shiftm.shiftm.domain.company.dto.CompanyRequestBuilder;
 import com.shiftm.shiftm.domain.company.dto.request.CompanyRequest;
 import com.shiftm.shiftm.domain.company.exception.CompanyNotFoundException;
-import com.shiftm.shiftm.domain.company.exception.DuplicatedCompanyIdException;
+import com.shiftm.shiftm.domain.company.exception.CompanyAlreadyExistsException;
 import com.shiftm.shiftm.domain.company.repository.CompanyRepository;
 import com.shiftm.shiftm.test.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ class CompanyServiceTest extends UnitTest {
         // given
         final CompanyRequest requestDto = CompanyRequestBuilder.build();
 
-        when(companyRepository.existsByCompanyId(any())).thenReturn(false);
+        when(companyRepository.exists()).thenReturn(false);
         when(companyRepository.save(any())).thenReturn(company);
 
         // when
@@ -59,16 +59,16 @@ class CompanyServiceTest extends UnitTest {
         assertThat(createCompany.getLongitude()).isEqualTo(company.getLongitude());
     }
 
-    @DisplayName(("회사 생성 실패 - 이름 중복"))
+    @DisplayName(("회사 생성 실패 - 이미 존재"))
     @Test
-    public void 회사_생성_실패_이름_중복 () {
+    public void 회사_생성_실패_이미_존재 () {
         // given
         final CompanyRequest requestDto = CompanyRequestBuilder.build();
 
-        when(companyRepository.existsByCompanyId(any())).thenReturn(true);
+        when(companyRepository.exists()).thenReturn(true);
 
         // when, then
-        assertThrows(DuplicatedCompanyIdException.class, () -> companyService.createCompany(requestDto));
+        assertThrows(CompanyAlreadyExistsException.class, () -> companyService.createCompany(requestDto));
     }
 
     @DisplayName("회사 수정 성공")
@@ -94,18 +94,18 @@ class CompanyServiceTest extends UnitTest {
         assertThat(updateCompany.getLongitude()).isEqualTo(0.0);
     }
 
-    @DisplayName("회사 수정 실패 - 이름 중복")
+    @DisplayName("회사 수정 실패 - 이미 존재")
     @Test
-    public void 회사_수정_실패_이름_중복 () {
+    public void 회사_수정_실패_이미_존재 () {
         // given
         final CompanyRequest requestDto = new CompanyRequest("shiftm", LocalTime.of(0, 0), LocalTime.of(0, 0),
                 LocalTime.of(0, 0), LocalTime.of(0, 0), 0.0, 0.0);
 
         when(companyRepository.findById(any())).thenReturn(Optional.of(company));
-        when(companyRepository.existsByCompanyId(any())).thenReturn(true);
+        when(companyRepository.exists()).thenReturn(true);
 
         // when, then
-        assertThrows(DuplicatedCompanyIdException.class, () -> companyService.updateCompany(null, requestDto));
+        assertThrows(CompanyAlreadyExistsException.class, () -> companyService.updateCompany(null, requestDto));
     }
 
     @DisplayName("회사 수정 실패 - 존재하지 않는 회사ID")

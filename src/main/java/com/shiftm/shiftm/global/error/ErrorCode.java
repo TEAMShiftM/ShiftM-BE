@@ -26,8 +26,8 @@ public enum ErrorCode {
     NOT_FOUND_LEAVE_TYPE(404, "LVT002", "Leave type not found"),
 
     /* COMPANY ERROR */
-    DUPLICATED_COMPANY_ID(400, "COMPANY001", "It is Duplicated Company ID"),
-    COMPANY_NOT_FOUND(404, "COMPANY002", "Company not found");
+    COMPANY_ALREADY_EXISTS(404, "COMPANY001", "Company Is Already Exists"),
+    COMPANY_NOT_FOUND(404, "COMPANY002", "Company Not Found");
 
     private final int status;
     private final String code;
