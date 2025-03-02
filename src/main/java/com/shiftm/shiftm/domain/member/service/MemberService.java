@@ -62,7 +62,8 @@ public class MemberService {
 
     @Transactional
     public boolean verifyEmailCode(final VerifyEmailCodeRequest requestDto) {
-        return true;
+        final String storedVerificationCode = redisService.getValue("VERIFICATION_CODE:" + requestDto.email());
+        return storedVerificationCode.equals(requestDto.verificationCode());
     }
 
     @Transactional
