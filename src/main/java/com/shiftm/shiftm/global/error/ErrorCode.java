@@ -23,7 +23,11 @@ public enum ErrorCode {
 
     /* LEAVE TYPE ERROR */
     DUPLICATED_NAME(400, "LVT001", "It Is Duplicated Name"),
-    NOT_FOUND_LEAVE_TYPE(404, "LVT002", "Leave type not found");
+    NOT_FOUND_LEAVE_TYPE(404, "LVT002", "Leave type not found"),
+
+    /* COMPANY ERROR */
+    COMPANY_ALREADY_EXISTS(404, "COMPANY001", "Company Is Already Exists"),
+    COMPANY_NOT_FOUND(404, "COMPANY002", "Company Not Found");
 
     private final int status;
     private final String code;
