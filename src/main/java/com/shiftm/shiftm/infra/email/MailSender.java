@@ -18,7 +18,6 @@ public class MailSender {
             MimeMessage mailMessage = createMailMessage(to, title, text);
             javaMailSender.send(mailMessage);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new UnableToSendEmailException();
         }
     }
