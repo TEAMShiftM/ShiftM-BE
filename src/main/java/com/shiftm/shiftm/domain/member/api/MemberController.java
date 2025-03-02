@@ -28,6 +28,11 @@ public class MemberController {
         return new CheckResponse(isVerified);
     }
 
+    @PostMapping("/check/email")
+    public void sendEmailVerificationCode(@RequestParam final String email) {
+        memberService.sendEmailVerificationCode(email);
+    }
+
     @GetMapping("/me")
     public MemberResponse getProfile(@AuthId final String memberId) {
         final Member member = memberService.getProfile(memberId);
