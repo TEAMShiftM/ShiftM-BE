@@ -27,6 +27,9 @@ public class SecurityConfig {
 
     private static final String[] whiteList = {
             "/member/signup",
+            "/member/check/id",
+            "/member/check/email",
+            "/member/check/email/code",
             "/auth/login",
             "/auth/reissue"
     };
