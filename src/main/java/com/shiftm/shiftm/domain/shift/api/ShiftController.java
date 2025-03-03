@@ -1,8 +1,10 @@
 package com.shiftm.shiftm.domain.shift.api;
 
 import com.shiftm.shiftm.domain.shift.domain.Shift;
+import com.shiftm.shiftm.domain.shift.dto.request.AfterCheckinRequest;
 import com.shiftm.shiftm.domain.shift.dto.request.CheckinRequest;
 import com.shiftm.shiftm.domain.shift.dto.request.CheckoutRequest;
+import com.shiftm.shiftm.domain.shift.dto.response.AfterCheckinResponse;
 import com.shiftm.shiftm.domain.shift.dto.response.CheckinResponse;
 import com.shiftm.shiftm.domain.shift.dto.response.CheckoutResponse;
 import com.shiftm.shiftm.domain.shift.service.ShiftService;
@@ -28,5 +30,11 @@ public class ShiftController {
     public CheckoutResponse createCheckout(@AuthId String memberId, @Valid @RequestBody final CheckoutRequest requestDto) {
         final Shift shift = shiftService.createCheckout(memberId, requestDto);
         return new CheckoutResponse(shift);
+    }
+
+    @PostMapping("/check-in/after")
+    public AfterCheckinResponse createAfterCheckin(@AuthId String memberId, @Valid @RequestBody final AfterCheckinRequest requestDto) {
+        final Shift shift = shiftService.createAfterCheckin(memberId, requestDto);
+        return new AfterCheckinResponse(shift);
     }
 }

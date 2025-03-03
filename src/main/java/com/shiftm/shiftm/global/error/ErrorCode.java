@@ -30,7 +30,7 @@ public enum ErrorCode {
     COMPANY_NOT_FOUND(404, "COMPANY002", "Company Not Found"),
 
     /* SHIFT ERROR */
-    DUPLICATED_CHECKIN(400, "SHIFT001", "It Is Duplicated Checkin"),
+    CHECKIN_ALREADY_EXISTS(404, "SHIFT001", "Checkin Is Already Exists"),
     SHIFT_NOT_FOUND(404, "SHIFT002", "Shift Not Found");
 
     private final int status;
