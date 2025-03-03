@@ -31,7 +31,10 @@ public enum ErrorCode {
 
     /* SHIFT ERROR */
     CHECKIN_ALREADY_EXISTS(404, "SHIFT001", "Checkin Is Already Exists"),
-    SHIFT_NOT_FOUND(404, "SHIFT002", "Shift Not Found");
+    SHIFT_NOT_FOUND(404, "SHIFT002", "Shift Not Found"),
+  
+    /* EMAIL ERROR */
+    UNABLE_TO_SEND_EMAIL(500, "EMAIL001", "Unable To Send Email");
 
     private final int status;
     private final String code;
