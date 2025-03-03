@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class LeaveTypeDao {
+
     private final LeaveTypeRepository leaveTypeRepository;
 
     public LeaveType findById(final Long id) {

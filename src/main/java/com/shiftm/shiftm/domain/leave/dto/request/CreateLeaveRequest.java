@@ -16,7 +16,8 @@ public record CreateLeaveRequest(
         Long leaveTypeId,
         @NotNull
         LocalDate expirationDate,
-        @NotNull @Min(value = 1)
+        @NotNull
+        @Min(value = 1)
         Integer count
 ) {
     public Leave toEntity() {

@@ -3,6 +3,8 @@ package com.shiftm.shiftm.domain.leave.service;
 import com.shiftm.shiftm.domain.leave.domain.Leave;
 import com.shiftm.shiftm.domain.leave.domain.LeaveType;
 import com.shiftm.shiftm.domain.leave.dto.request.CreateLeaveRequest;
+import com.shiftm.shiftm.domain.leave.dto.request.UpdateLeaveRequest;
+import com.shiftm.shiftm.domain.leave.repository.LeaveDao;
 import com.shiftm.shiftm.domain.leave.repository.LeaveRepository;
 import com.shiftm.shiftm.domain.leave.repository.LeaveTypeDao;
 import com.shiftm.shiftm.domain.member.domain.Member;
@@ -22,6 +24,7 @@ public class LeaveService {
     private final MemberRepository memberRepository;
     private final MemberDao memberDao;
     private final LeaveTypeDao leaveTypeDao;
+    private final LeaveDao leaveDao;
     private final LeaveRepository leaveRepository;
 
     @Transactional
@@ -37,6 +40,19 @@ public class LeaveService {
                 .toList();
 
         leaveRepository.saveAll(leaves);
+    }
+
+    @Transactional
+    public void updateLeave(final Long leaveId, final UpdateLeaveRequest requestDto) {
+        final Leave leave = leaveDao.findById(leaveId);
+
+        if (leave.getLeaveType().getId() != requestDto.leaveTypeId()) {
+            final LeaveType leaveType = leaveTypeDao.findById(requestDto.leaveTypeId());
+
+            leave.updateLeaveType(leaveType);
+        }
+
+        leave.updateLeave(requestDto.count(), requestDto.expirationDate());
     }
 
     private Leave toEntity(final CreateLeaveRequest requestDto, final LeaveType leaveType) {

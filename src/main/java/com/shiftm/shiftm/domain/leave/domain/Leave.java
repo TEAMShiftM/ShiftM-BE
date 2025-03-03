@@ -45,4 +45,9 @@ public class Leave {
     public void updateLeaveType(final LeaveType leaveType) {
         this.leaveType = leaveType;
     }
+
+    public void updateLeave(final Integer count, final LocalDate expirationDate) {
+        this.count = count;
+        this.expirationDate = expirationDate;
+    }
 }
