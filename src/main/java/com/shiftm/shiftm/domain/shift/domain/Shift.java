@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "shifts")
@@ -31,5 +33,9 @@ public class Shift {
         this.checkin = checkin;
         this.checkout = checkout;
         this.member = member;
+    }
+
+    public void checkout(final LocalDateTime checkoutTime) {
+        this.checkout = new Checkout(checkoutTime);
     }
 }

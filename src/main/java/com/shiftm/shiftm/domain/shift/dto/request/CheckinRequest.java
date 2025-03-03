@@ -11,8 +11,6 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public record CheckinRequest(
-        @NotBlank
-        String memberId,
         @NotNull
         LocalDateTime checkinTime
 ) {
@@ -29,7 +27,5 @@ public record CheckinRequest(
                         .build())
                 .member(member)
                 .build();
-
-
     }
 }
