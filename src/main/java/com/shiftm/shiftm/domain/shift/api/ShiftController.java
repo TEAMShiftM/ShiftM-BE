@@ -4,10 +4,7 @@ import com.shiftm.shiftm.domain.shift.domain.Shift;
 import com.shiftm.shiftm.domain.shift.dto.request.AfterCheckinRequest;
 import com.shiftm.shiftm.domain.shift.dto.request.CheckinRequest;
 import com.shiftm.shiftm.domain.shift.dto.request.CheckoutRequest;
-import com.shiftm.shiftm.domain.shift.dto.response.AfterCheckinResponse;
-import com.shiftm.shiftm.domain.shift.dto.response.CheckinResponse;
-import com.shiftm.shiftm.domain.shift.dto.response.CheckoutResponse;
-import com.shiftm.shiftm.domain.shift.dto.response.ShiftResponse;
+import com.shiftm.shiftm.domain.shift.dto.response.*;
 import com.shiftm.shiftm.domain.shift.service.ShiftService;
 import com.shiftm.shiftm.global.auth.annotation.AuthId;
 import jakarta.validation.Valid;
@@ -16,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RequestMapping("/shift")
@@ -43,14 +41,17 @@ public class ShiftController {
     }
 
     @GetMapping
-    public List<ShiftResponse> getShiftsInRange(@AuthId String memberId, @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
-        LocalDate today = LocalDate.now();
+    public ShiftListResponse getShiftsInRange(@AuthId String memberId, @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
+        final LocalDate today = LocalDate.now();
         if (startDate == null) {
             startDate = today.minusYears(100);
         }
         if (endDate == null) {
             endDate = today;
         }
-        return shiftService.getShiftsInRange(memberId, startDate, endDate);
+        final List<ShiftResponse> shifts = shiftService.getShiftsInRange(memberId, startDate, endDate).stream()
+                .map(shift -> new ShiftResponse(shift))
+                .collect(Collectors.toList());
+        return new ShiftListResponse(shifts);
     }
 }
