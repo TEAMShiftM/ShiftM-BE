@@ -1,4 +1,12 @@
 package com.shiftm.shiftm.domain.shift.repository;
 
-public interface ShiftRepository {
+import com.shiftm.shiftm.domain.member.domain.Member;
+import com.shiftm.shiftm.domain.shift.domain.Shift;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.time.LocalDateTime;
+
+public interface ShiftRepository extends JpaRepository<Shift, Long> {
+
+    boolean existsByMemberAndCheckin_CheckinTimeBetween(Member member, LocalDateTime start, LocalDateTime end);
 }

@@ -27,7 +27,10 @@ public enum ErrorCode {
 
     /* COMPANY ERROR */
     COMPANY_ALREADY_EXISTS(404, "COMPANY001", "Company Is Already Exists"),
-    COMPANY_NOT_FOUND(404, "COMPANY002", "Company Not Found");
+    COMPANY_NOT_FOUND(404, "COMPANY002", "Company Not Found"),
+
+    /* SHIFT ERROR */
+    DUPLICATED_CHECKIN(400, "SHIFT001", "It Is Duplicated Checkin");
 
     private final int status;
     private final String code;
