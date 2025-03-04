@@ -7,6 +7,7 @@ import com.shiftm.shiftm.domain.shift.domain.enums.Status;
 import com.shiftm.shiftm.domain.shift.dto.request.AfterCheckinRequest;
 import com.shiftm.shiftm.domain.shift.dto.request.CheckinRequest;
 import com.shiftm.shiftm.domain.shift.dto.request.CheckoutRequest;
+import com.shiftm.shiftm.domain.shift.dto.request.ShiftStatusRequest;
 import com.shiftm.shiftm.domain.shift.exception.CheckinAlreadyExistsException;
 import com.shiftm.shiftm.domain.shift.exception.ShiftNotFoundException;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
@@ -91,11 +92,22 @@ public class ShiftService {
         return shiftRepository.findByStatusExcludeAndNameOrdered(pageable, Status.AUTO_APPROVED, name);
     }
 
+    public Shift updateAfterCheckinStatus(final Long shiftId, final ShiftStatusRequest requestDto) {
+        final Shift shift = findById(shiftId);
+        shift.updateStatus(requestDto.status());
+        return shift;
+    }
+
     private void validateDuplicateCheckin(final Member member) {
         final LocalDateTime start = LocalDate.now().atStartOfDay();
         final LocalDateTime end = start.plusDays(1).minusNanos(1);
         if (shiftRepository.existsByMemberAndCheckinTimeInRange(member, start, end)) {
             throw new CheckinAlreadyExistsException();
         }
+    }
+
+    private Shift findById(final Long shiftId) {
+        return shiftRepository.findById(shiftId)
+                .orElseThrow(() -> new ShiftNotFoundException());
     }
 }

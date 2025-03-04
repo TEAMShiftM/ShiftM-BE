@@ -1,6 +1,7 @@
 package com.shiftm.shiftm.domain.shift.domain;
 
 import com.shiftm.shiftm.domain.member.domain.Member;
+import com.shiftm.shiftm.domain.shift.domain.enums.Status;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,5 +38,9 @@ public class Shift {
 
     public void checkout(final LocalDateTime checkoutTime) {
         this.checkout = new Checkout(checkoutTime);
+    }
+
+    public void updateStatus(final Status status) {
+        this.checkin = new Checkin(checkin.getCheckinTime(), checkin.getLatitude(), checkin.getLongitude(), status);
     }
 }

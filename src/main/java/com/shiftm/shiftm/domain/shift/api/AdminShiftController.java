@@ -1,11 +1,13 @@
 package com.shiftm.shiftm.domain.shift.api;
 
 import com.shiftm.shiftm.domain.shift.domain.Shift;
+import com.shiftm.shiftm.domain.shift.dto.request.ShiftStatusRequest;
 import com.shiftm.shiftm.domain.shift.dto.response.AdminShiftListResponse;
 import com.shiftm.shiftm.domain.shift.dto.response.AdminShiftResponse;
 import com.shiftm.shiftm.domain.shift.dto.response.AfterCheckinListResponse;
 import com.shiftm.shiftm.domain.shift.dto.response.AfterCheckinResponse;
 import com.shiftm.shiftm.domain.shift.service.ShiftService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,5 +48,11 @@ public class AdminShiftController {
                 .map(shift -> new AfterCheckinResponse(shift))
                 .collect(Collectors.toList());
         return new AfterCheckinListResponse(shifts, page, size, shiftPage.getTotalPages(), shiftPage.getTotalElements());
+    }
+
+    // 출근 상태 변경
+    @PatchMapping("/{shiftId}/status")
+    public AfterCheckinResponse updateAfterCheckinStatus(@PathVariable final Long shiftId, @Valid @RequestBody final ShiftStatusRequest requestDto) {
+        return new AfterCheckinResponse(shiftService.updateAfterCheckinStatus(shiftId, requestDto));
     }
 }
