@@ -78,7 +78,7 @@ public class LeaveRequestService {
     public List<LeaveRequest> getRequestLeaveInfos(final String memberId) {
         final Member member = memberDao.findById(memberId);
 
-        return leaveRequestRepository.findByMemberOrderByIdDesc(member);
+        return leaveRequestRepository.findByMember(member);
     }
 
     @Transactional
@@ -96,6 +96,18 @@ public class LeaveRequestService {
         }
 
         leaveRequest.updateStatus(request.status());
+    }
+
+    @Transactional(readOnly = true)
+    public List<LeaveRequest> getAllLeaveRequests() {
+        return leaveRequestRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<LeaveRequest> getLeaveRequest(final String memberId) {
+        final Member member = memberDao.findById(memberId);
+
+        return leaveRequestRepository.findByMember(member);
     }
 
     private LeaveRequest findById(final Long leaveRequestId) {

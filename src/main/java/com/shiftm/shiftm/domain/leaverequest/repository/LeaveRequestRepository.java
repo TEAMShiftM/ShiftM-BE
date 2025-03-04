@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long> {
-    List<LeaveRequest> findByMemberOrderByIdDesc(final Member member);
+    List<LeaveRequest> findByMember(final Member member);
 }
