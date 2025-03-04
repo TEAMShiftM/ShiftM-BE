@@ -28,6 +28,10 @@ public enum ErrorCode {
     /* COMPANY ERROR */
     COMPANY_ALREADY_EXISTS(404, "COMPANY001", "Company Is Already Exists"),
     COMPANY_NOT_FOUND(404, "COMPANY002", "Company Not Found"),
+
+    /* SHIFT ERROR */
+    CHECKIN_ALREADY_EXISTS(404, "SHIFT001", "Checkin Is Already Exists"),
+    SHIFT_NOT_FOUND(404, "SHIFT002", "Shift Not Found"),
   
     /* EMAIL ERROR */
     UNABLE_TO_SEND_EMAIL(500, "EMAIL001", "Unable To Send Email");
