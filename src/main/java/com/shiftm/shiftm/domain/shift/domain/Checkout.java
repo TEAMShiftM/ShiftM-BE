@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
 public class Checkout {
-    @Column(nullable = false)
     private LocalDateTime checkoutTime;
 
     @Builder

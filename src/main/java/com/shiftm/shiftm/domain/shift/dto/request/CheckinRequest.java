@@ -22,9 +22,7 @@ public record CheckinRequest(
                         .longitude(null)
                         .status(Status.AUTO_APPROVED)
                         .build())
-                .checkout(Checkout.builder()
-                        .checkoutTime(checkinTime) //TODO 퇴근 시간 기본값 설정
-                        .build())
+                .checkout(null)
                 .member(member)
                 .build();
     }

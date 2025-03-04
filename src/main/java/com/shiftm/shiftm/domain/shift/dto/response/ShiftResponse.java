@@ -10,6 +10,7 @@ public record ShiftResponse(
         LocalDateTime checkoutTime
 ) {
     public ShiftResponse(final Shift shift) {
-        this(shift.getId(), shift.getCheckin().getCheckinTime(), shift.getCheckout().getCheckoutTime());
+        this(shift.getId(), shift.getCheckin().getCheckinTime(),
+                shift.getCheckout() != null ? shift.getCheckout().getCheckoutTime() : null);
     }
 }
