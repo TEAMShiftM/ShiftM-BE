@@ -32,7 +32,15 @@ public enum ErrorCode {
     /* LEAVE REQUEST ERROR */
     LEAVE_NOT_ENOUGH(400, "LVR001", "Leave Not Enough"),
     LEAVE_REQUEST_NOT_AUTHOR(401, "LVR002", "Not the author."),
-    LEAVE_REQUEST_UPDATE_FAILED(400, "LVR003", "Leave request Update failed.");
+    LEAVE_REQUEST_UPDATE_FAILED(400, "LVR003", "Leave request Update failed."),
+
+    /* SHIFT ERROR */
+    CHECKIN_ALREADY_EXISTS(404, "SHIFT001", "Checkin Is Already Exists"),
+    SHIFT_NOT_FOUND(404, "SHIFT002", "Shift Not Found"),
+  
+    /* EMAIL ERROR */
+    UNABLE_TO_SEND_EMAIL(500, "EMAIL001", "Unable To Send Email");
+
 
     private final int status;
     private final String code;
