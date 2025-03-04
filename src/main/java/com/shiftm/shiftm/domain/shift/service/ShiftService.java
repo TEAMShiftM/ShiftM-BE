@@ -3,6 +3,7 @@ package com.shiftm.shiftm.domain.shift.service;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
 import com.shiftm.shiftm.domain.shift.domain.Shift;
+import com.shiftm.shiftm.domain.shift.domain.enums.Status;
 import com.shiftm.shiftm.domain.shift.dto.request.AfterCheckinRequest;
 import com.shiftm.shiftm.domain.shift.dto.request.CheckinRequest;
 import com.shiftm.shiftm.domain.shift.dto.request.CheckoutRequest;
@@ -80,6 +81,14 @@ public class ShiftService {
             return shiftRepository.findAll(pageable);
         }
         return shiftRepository.findByName(pageable, name);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Shift> getAfterCheckin(final Pageable pageable, final String name) {
+        if (name == null || name.isEmpty()) {
+            return shiftRepository.findByStatusExcludeOrdered(pageable, Status.AUTO_APPROVED);
+        }
+        return shiftRepository.findByStatusExcludeAndNameOrdered(pageable, Status.AUTO_APPROVED, name);
     }
 
     private void validateDuplicateCheckin(final Member member) {

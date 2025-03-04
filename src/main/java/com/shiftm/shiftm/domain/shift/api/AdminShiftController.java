@@ -3,6 +3,8 @@ package com.shiftm.shiftm.domain.shift.api;
 import com.shiftm.shiftm.domain.shift.domain.Shift;
 import com.shiftm.shiftm.domain.shift.dto.response.AdminShiftListResponse;
 import com.shiftm.shiftm.domain.shift.dto.response.AdminShiftResponse;
+import com.shiftm.shiftm.domain.shift.dto.response.AfterCheckinListResponse;
+import com.shiftm.shiftm.domain.shift.dto.response.AfterCheckinResponse;
 import com.shiftm.shiftm.domain.shift.service.ShiftService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,5 +36,18 @@ public class AdminShiftController {
                 .map(shift -> new AdminShiftResponse(shift))
                 .collect(Collectors.toList());
         return new AdminShiftListResponse(shifts, page, size, shiftPage.getTotalPages(), shiftPage.getTotalElements());
+    }
+
+    // 사후 출근 신청 조회
+    @GetMapping("/checkin/after")
+    public AfterCheckinListResponse getAfterCheckin(@RequestParam(defaultValue = "0") final int page,
+                                                    @RequestParam(defaultValue = "10") final int size,
+                                                    @RequestParam(required = false) final String name) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Shift> shiftPage = shiftService.getAfterCheckin(pageable, name);
+        final List<AfterCheckinResponse> shifts = shiftPage.getContent().stream()
+                .map(shift -> new AfterCheckinResponse(shift))
+                .collect(Collectors.toList());
+        return new AfterCheckinListResponse(shifts, page, size, shiftPage.getTotalPages(), shiftPage.getTotalElements());
     }
 }
