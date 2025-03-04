@@ -7,6 +7,7 @@ import com.shiftm.shiftm.domain.member.domain.enums.Status;
 import com.shiftm.shiftm.domain.member.dto.request.*;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedEmailException;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedIdException;
+import com.shiftm.shiftm.domain.member.exception.MemberNotFoundException;
 import com.shiftm.shiftm.domain.member.exception.PasswordNotMatchException;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
 import com.shiftm.shiftm.domain.member.repository.MemberRepository;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 @RequiredArgsConstructor
@@ -76,8 +78,19 @@ public class MemberService {
         mailSender.sendMail(requestDto.email(), "[ShiftM] 아이디 찾기", mailMessage);
     }
 
+    @Transactional
     public void findPassword(final FindPasswordRequest requestDto) {
+        final Member member = memberDao.findByEmail(requestDto.email());
 
+        if (!member.getId().equals(requestDto.id())) {
+            throw new MemberNotFoundException(requestDto.id());
+        }
+
+        final String tempPassword = generateTempPassword();
+        member.setPassword(passwordEncoder.encode(tempPassword));
+
+        final String mailMessage = createMailMessage("ShiftM 임시 비밀번호 발급", "회원님의 임시 비밀번호는 다음과 같습니다.", tempPassword);
+        mailSender.sendMail(requestDto.email(), "[ShiftM] 임시 비밀번호 발급", mailMessage);
     }
 
     @Transactional
@@ -151,5 +164,20 @@ public class MemberService {
         mailMessage.append("</table>");
 
         return mailMessage.toString();
+    }
+
+    private String generateTempPassword() {
+        final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-";
+        final int PASSWORD_LENGTH = 8;
+        final SecureRandom random = new SecureRandom();
+
+        StringBuilder password = new StringBuilder(PASSWORD_LENGTH);
+
+        for (int i = 0; i < PASSWORD_LENGTH; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            password.append(CHARACTERS.charAt(index));
+        }
+
+        return password.toString();
     }
 }
