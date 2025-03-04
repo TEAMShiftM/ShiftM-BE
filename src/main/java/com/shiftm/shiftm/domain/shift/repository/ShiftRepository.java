@@ -16,17 +16,17 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
 
     @Query("SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END FROM Shift s " +
             "WHERE s.member = :member AND s.checkin.checkinTime >= :start AND s.checkin.checkinTime <= :end")
-    boolean existsByMemberAndCheckinTimeInRange(Member member, LocalDateTime start, LocalDateTime end);
+    boolean existsByMemberAndCheckinTimeInRange(final Member member, final LocalDateTime start, final LocalDateTime end);
 
     @Query("SELECT s FROM Shift s WHERE s.member = :member AND s.checkin.checkinTime >= :start AND s.checkin.checkinTime <= :end " +
             "AND s.deleted = 0")
-    Optional<Shift> findShiftByMemberAndCheckinTimeInRange(Member member, LocalDateTime start, LocalDateTime end);
+    Optional<Shift> findShiftByMemberAndCheckinTimeInRange(final Member member, final LocalDateTime start, final LocalDateTime end);
 
     @Query("SELECT s FROM Shift s WHERE s.member = :member " +
             "AND (:start IS NULL OR s.checkin.checkinTime >= :start) " +
             "AND (:end IS NULL OR s.checkin.checkinTime <= :end) " +
             "AND s.deleted = 0")
-    List<Shift> findShiftsByMemberAndCheckinTimeInRange(Member member, LocalDateTime start, LocalDateTime end);
+    List<Shift> findShiftsByMemberAndCheckinTimeInRange(final Member member, final LocalDateTime start, final LocalDateTime end);
 
     @Query("SELECT s FROM Shift s WHERE s.member.name = :name")
     Page<Shift> findByName(final Pageable pageable, final String name);
