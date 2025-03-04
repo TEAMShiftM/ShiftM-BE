@@ -10,6 +10,8 @@ import com.shiftm.shiftm.domain.shift.exception.CheckinAlreadyExistsException;
 import com.shiftm.shiftm.domain.shift.exception.ShiftNotFoundException;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,6 +72,14 @@ public class ShiftService {
         final Shift shift = shiftRepository.findShiftByMemberAndCheckinTimeInRange(member, start, end)
                 .orElseThrow(() -> new ShiftNotFoundException());
         return shift;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Shift> getShifts(final Pageable pageable, final String name) {
+        if (name == null || name.isEmpty()) {
+            return shiftRepository.findAll(pageable);
+        }
+        return shiftRepository.findByName(pageable, name);
     }
 
     private void validateDuplicateCheckin(final Member member) {
