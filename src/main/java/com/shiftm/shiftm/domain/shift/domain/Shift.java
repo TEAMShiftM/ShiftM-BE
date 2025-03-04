@@ -29,7 +29,7 @@ public class Shift {
     private Member member;
 
     @Builder
-    public Shift(Checkin checkin, Checkout checkout, Member member) {
+    public Shift(final Checkin checkin, final Checkout checkout, final Member member) {
         this.checkin = checkin;
         this.checkout = checkout;
         this.member = member;
