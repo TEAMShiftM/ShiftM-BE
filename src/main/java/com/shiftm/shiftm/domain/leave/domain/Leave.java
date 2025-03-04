@@ -22,6 +22,9 @@ public class Leave {
     private Double count;
 
     @Column(nullable = false)
+    private Double usedCount;
+
+    @Column(nullable = false)
     private LocalDate expirationDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,6 +38,7 @@ public class Leave {
     @Builder
     public Leave(final Double count, final LocalDate expirationDate) {
         this.count = count;
+        this.usedCount = 0.0;
         this.expirationDate = expirationDate;
     }
 
@@ -46,8 +50,9 @@ public class Leave {
         this.leaveType = leaveType;
     }
 
-    public void updateLeave(final Double count, final LocalDate expirationDate) {
+    public void updateLeave(final Double count, final Double usedCount, final LocalDate expirationDate) {
         this.count = count;
+        this.usedCount = usedCount;
         this.expirationDate = expirationDate;
     }
 }
