@@ -58,4 +58,9 @@ public class MemberController {
     public void updatePassword(@AuthId final String memberId, @Valid @RequestBody final UpdatePasswordRequest requestDto) {
         memberService.updatePassword(memberId, requestDto);
     }
+
+    @DeleteMapping("/me")
+    public void withdraw(@AuthId final String memberId) {
+        memberService.withdraw(memberId);
+    }
 }

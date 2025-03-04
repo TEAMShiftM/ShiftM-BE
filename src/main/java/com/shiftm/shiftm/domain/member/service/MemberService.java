@@ -98,6 +98,10 @@ public class MemberService {
         member.setPassword(passwordEncoder.encode(requestDto.newPassword()));
     }
 
+    public void withdraw(final String memberId) {
+
+    }
+
     private String createVerificationCode() {
         final Random random = new Random();
         final StringBuilder verificationCode = new StringBuilder();
