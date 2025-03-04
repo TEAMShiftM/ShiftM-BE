@@ -42,18 +42,8 @@ public class ShiftService {
 
     @Transactional
     public Shift createCheckout(final String memberId, final CheckoutRequest requestDto) {
-        final Shift shift = getShiftByDate(memberId, LocalDate.now());
+        final Shift shift = getShiftForCurrentDay(memberId);
         shift.checkout(requestDto.checkoutTime());
-        return shift;
-    }
-
-    @Transactional(readOnly = true)
-    public Shift getShiftByDate(final String memberId, final LocalDate date) {
-        final Member member = memberDao.findById(memberId);
-        final LocalDateTime start = date.atStartOfDay();
-        final LocalDateTime end = start.plusDays(1).minusNanos(1);
-        final Shift shift = shiftRepository.findShiftByMemberAndCheckin_CheckinTimeBetween(member, start, end)
-                .orElseThrow(() -> new ShiftNotFoundException());
         return shift;
     }
 
@@ -63,6 +53,20 @@ public class ShiftService {
         final LocalDateTime start = startDate.atStartOfDay();
         final LocalDateTime end = endDate.plusDays(1).atStartOfDay().minusNanos(1);
         return shiftRepository.findShiftsByMemberAndCheckin_CheckinTimeBetween(member, start, end);
+    }
+
+    @Transactional(readOnly = true)
+    public Shift getShiftForCurrentDay(final String memberId) {
+        final Member member = memberDao.findById(memberId);
+        final LocalDate today = LocalDate.now();
+        final LocalDateTime startOfDay = today.atStartOfDay(); // 오늘 자정
+        final LocalDateTime pivot = today.atTime(4, 0); // 오늘 04:00
+
+        final LocalDateTime start = (LocalDateTime.now().isBefore(pivot)) ? startOfDay.minusDays(1) : startOfDay;
+        final LocalDateTime end = start.plusDays(1).minusNanos(1);
+        final Shift shift = shiftRepository.findShiftByMemberAndCheckin_CheckinTimeBetween(member, start, end)
+                .orElseThrow(() -> new ShiftNotFoundException());
+        return shift;
     }
 
     private void validateDuplicateCheckin(final Member member) {
