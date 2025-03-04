@@ -15,11 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 public class ShiftService {
+
+    private static final LocalTime PIVOT_TIME = LocalTime.of(4, 0);
 
     private final ShiftRepository shiftRepository;
     private final MemberDao memberDao;
@@ -59,8 +62,8 @@ public class ShiftService {
     public Shift getShiftForCurrentDay(final String memberId) {
         final Member member = memberDao.findById(memberId);
         final LocalDate today = LocalDate.now();
-        final LocalDateTime startOfDay = today.atStartOfDay(); // 오늘 자정
-        final LocalDateTime pivot = today.atTime(4, 0); // 오늘 04:00
+        final LocalDateTime startOfDay = today.atStartOfDay();
+        final LocalDateTime pivot = today.atTime(PIVOT_TIME);
 
         final LocalDateTime start = (LocalDateTime.now().isBefore(pivot)) ? startOfDay.minusDays(1) : startOfDay;
         final LocalDateTime end = start.plusDays(1).minusNanos(1);
