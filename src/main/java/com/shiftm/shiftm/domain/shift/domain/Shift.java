@@ -43,4 +43,9 @@ public class Shift {
     public void updateStatus(final Status status) {
         this.checkin = new Checkin(checkin.getCheckinTime(), checkin.getLatitude(), checkin.getLongitude(), status);
     }
+
+    public void update(final LocalDateTime checkinTime, final Double latitude, final Double longitude, final Status status, final LocalDateTime checkoutTime) {
+        this.checkin = new Checkin(checkinTime, latitude, longitude, status);
+        this.checkout = new Checkout(checkoutTime);
+    }
 }

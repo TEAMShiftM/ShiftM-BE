@@ -4,10 +4,7 @@ import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
 import com.shiftm.shiftm.domain.shift.domain.Shift;
 import com.shiftm.shiftm.domain.shift.domain.enums.Status;
-import com.shiftm.shiftm.domain.shift.dto.request.AfterCheckinRequest;
-import com.shiftm.shiftm.domain.shift.dto.request.CheckinRequest;
-import com.shiftm.shiftm.domain.shift.dto.request.CheckoutRequest;
-import com.shiftm.shiftm.domain.shift.dto.request.ShiftStatusRequest;
+import com.shiftm.shiftm.domain.shift.dto.request.*;
 import com.shiftm.shiftm.domain.shift.exception.CheckinAlreadyExistsException;
 import com.shiftm.shiftm.domain.shift.exception.ShiftNotFoundException;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
@@ -95,6 +92,14 @@ public class ShiftService {
     public Shift updateAfterCheckinStatus(final Long shiftId, final ShiftStatusRequest requestDto) {
         final Shift shift = findById(shiftId);
         shift.updateStatus(requestDto.status());
+        return shift;
+    }
+
+    @Transactional
+    public Shift updateShift(final Long shiftId, final ShiftRequest requestDto) {
+        final Shift shift = findById(shiftId);
+        shift.update(requestDto.checkinTime(), requestDto.latitude(),
+                requestDto.longitude(), requestDto.status(), requestDto.checkoutTime());
         return shift;
     }
 

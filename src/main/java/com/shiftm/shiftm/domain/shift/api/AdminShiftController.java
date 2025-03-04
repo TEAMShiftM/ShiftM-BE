@@ -1,6 +1,7 @@
 package com.shiftm.shiftm.domain.shift.api;
 
 import com.shiftm.shiftm.domain.shift.domain.Shift;
+import com.shiftm.shiftm.domain.shift.dto.request.ShiftRequest;
 import com.shiftm.shiftm.domain.shift.dto.request.ShiftStatusRequest;
 import com.shiftm.shiftm.domain.shift.dto.response.AdminShiftListResponse;
 import com.shiftm.shiftm.domain.shift.dto.response.AdminShiftResponse;
@@ -54,5 +55,11 @@ public class AdminShiftController {
     @PatchMapping("/{shiftId}/status")
     public AfterCheckinResponse updateAfterCheckinStatus(@PathVariable final Long shiftId, @Valid @RequestBody final ShiftStatusRequest requestDto) {
         return new AfterCheckinResponse(shiftService.updateAfterCheckinStatus(shiftId, requestDto));
+    }
+
+    // 근무 기록 수정
+    @PatchMapping("/{shiftId}")
+    public AdminShiftResponse updateShift(@PathVariable final Long shiftId, @Valid @RequestBody final ShiftRequest requestDto) {
+        return new AdminShiftResponse(shiftService.updateShift(shiftId, requestDto));
     }
 }
