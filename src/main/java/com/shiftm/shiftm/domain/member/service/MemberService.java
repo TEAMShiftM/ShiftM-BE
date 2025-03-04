@@ -3,6 +3,7 @@ package com.shiftm.shiftm.domain.member.service;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.domain.enums.Role;
 import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
+import com.shiftm.shiftm.domain.member.dto.request.UpdateRequest;
 import com.shiftm.shiftm.domain.member.dto.request.VerifyEmailCodeRequest;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedEmailException;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedIdException;
@@ -69,6 +70,11 @@ public class MemberService {
     @Transactional
     public Member getProfile(final String memberId) {
         return memberDao.findById(memberId);
+    }
+
+    @Transactional
+    public Member updateProfile(final String memberId, final UpdateRequest requestDto) {
+
     }
 
     private String createVerificationCode() {
