@@ -44,10 +44,7 @@ public class ShiftController {
     public ShiftListResponse getShiftsInRange(@AuthId final String memberId,
                                               @RequestParam(required = false) final LocalDate startDate,
                                               @RequestParam(required = false) final LocalDate endDate) {
-        final LocalDate today = LocalDate.now();
-        final LocalDate actualStartDate = (startDate != null) ? startDate : LocalDate.of(2025, 3, 1);
-        final LocalDate actualEndDate = (endDate != null) ? endDate : today;
-        final List<ShiftResponse> shifts = shiftService.getShiftsInRange(memberId, actualStartDate, actualEndDate).stream()
+        final List<ShiftResponse> shifts = shiftService.getShiftsInRange(memberId, startDate, endDate).stream()
                 .map(shift -> new ShiftResponse(shift))
                 .collect(Collectors.toList());
         return new ShiftListResponse(shifts);

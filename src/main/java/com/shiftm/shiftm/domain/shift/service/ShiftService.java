@@ -50,9 +50,9 @@ public class ShiftService {
     @Transactional(readOnly = true)
     public List<Shift> getShiftsInRange(final String memberId, final LocalDate startDate, final LocalDate endDate) {
         final Member member = memberDao.findById(memberId);
-        final LocalDateTime start = startDate.atStartOfDay();
-        final LocalDateTime end = endDate.plusDays(1).atStartOfDay().minusNanos(1);
-        return shiftRepository.findShiftsByMemberAndCheckin_CheckinTimeBetween(member, start, end);
+        final LocalDateTime start = (startDate != null) ? startDate.atStartOfDay() : null;
+        final LocalDateTime end = (endDate != null) ? endDate.plusDays(1).atStartOfDay().minusNanos(1) : null;
+        return shiftRepository.findShiftsByMemberAndCheckinTimeInRange(member, start, end);
     }
 
     @Transactional(readOnly = true)
@@ -64,7 +64,7 @@ public class ShiftService {
 
         final LocalDateTime start = (LocalDateTime.now().isBefore(pivot)) ? startOfDay.minusDays(1) : startOfDay;
         final LocalDateTime end = start.plusDays(1).minusNanos(1);
-        final Shift shift = shiftRepository.findShiftByMemberAndCheckin_CheckinTimeBetween(member, start, end)
+        final Shift shift = shiftRepository.findShiftByMemberAndCheckinTimeInRange(member, start, end)
                 .orElseThrow(() -> new ShiftNotFoundException());
         return shift;
     }
@@ -72,7 +72,7 @@ public class ShiftService {
     private void validateDuplicateCheckin(final Member member) {
         final LocalDateTime start = LocalDate.now().atStartOfDay();
         final LocalDateTime end = start.plusDays(1).minusNanos(1);
-        if (shiftRepository.existsByMemberAndCheckin_CheckinTimeBetween(member, start, end)) {
+        if (shiftRepository.existsByMemberAndCheckinTimeInRange(member, start, end)) {
             throw new CheckinAlreadyExistsException();
         }
     }
