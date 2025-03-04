@@ -9,6 +9,7 @@ import com.shiftm.shiftm.domain.shift.dto.response.AfterCheckinListResponse;
 import com.shiftm.shiftm.domain.shift.dto.response.AfterCheckinResponse;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
 import com.shiftm.shiftm.domain.shift.service.ShiftService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,5 +74,19 @@ public class AdminShiftController {
     @DeleteMapping("/{shiftId}")
     public void deleteShift(@PathVariable final Long shiftId) {
         shiftRespository.deleteById(shiftId);
+    }
+
+    // 엑셀 파일 변환
+    @GetMapping("/export")
+    public void exportShiftRecords(HttpServletResponse response) throws IOException {
+        final List<Shift> shifts = shiftRespository.findAll();
+        final byte[] excelData = shiftService.exportShiftToExcel(shifts);
+
+        final String encodedFileName = URLEncoder.encode("근무기록.xlsx", "UTF-8").replaceAll("\\+", "%20");
+        response.setHeader("Content-Disposition", "attachment; filename=" + encodedFileName);
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+        response.getOutputStream().write(excelData);
+        response.flushBuffer();
     }
 }
