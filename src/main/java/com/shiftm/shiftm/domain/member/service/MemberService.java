@@ -68,8 +68,12 @@ public class MemberService {
         return storedVerificationCode.equals(requestDto.verificationCode());
     }
 
+    @Transactional
     public void findId(final FindIdRequest requestDto) {
+        final Member member = memberDao.findByEmail(requestDto.email());
 
+        final String mailMessage = createMailMessage("ShiftM 아이디 찾기", "회원님의 아이디는 다음과 같습니다.", member.getId());
+        mailSender.sendMail(requestDto.email(), "[ShiftM] 아이디 찾기", mailMessage);
     }
 
     @Transactional

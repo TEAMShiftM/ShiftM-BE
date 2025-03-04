@@ -14,4 +14,9 @@ public class MemberDao {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new MemberNotFoundException(id));
     }
+
+    public Member findByEmail(final String email) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberNotFoundException(email));
+    }
 }
