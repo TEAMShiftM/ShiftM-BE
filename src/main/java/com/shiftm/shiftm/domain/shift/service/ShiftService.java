@@ -111,30 +111,6 @@ public class ShiftService {
         return shift;
     }
 
-    public byte[] exportShiftToExcel(List<Shift> shifts) throws IOException {
-        final Workbook workbook = new XSSFWorkbook();
-        final Sheet sheet = workbook.createSheet("근무 기록");
-
-        final Row headerRow = sheet.createRow(0);
-        headerRow.createCell(0).setCellValue("사원명");
-        headerRow.createCell(1).setCellValue("출근 시간");
-        headerRow.createCell(2).setCellValue("퇴근 시간");
-
-        int rowNum = 1;
-        for (Shift shift : shifts) {
-            Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(shift.getMember().getName());
-            row.createCell(1).setCellValue(shift.getCheckin().getCheckinTime().toString());
-            row.createCell(2).setCellValue(shift.getCheckout().getCheckoutTime().toString());
-        }
-
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        workbook.write(byteArrayOutputStream);
-        workbook.close();
-
-        return byteArrayOutputStream.toByteArray();
-    }
-
     private void validateDuplicateCheckin(final Member member) {
         final LocalDateTime start = LocalDate.now().atStartOfDay();
         final LocalDateTime end = start.plusDays(1).minusNanos(1);

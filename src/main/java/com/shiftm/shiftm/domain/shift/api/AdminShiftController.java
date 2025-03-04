@@ -6,6 +6,7 @@ import com.shiftm.shiftm.domain.shift.dto.request.ShiftStatusRequest;
 import com.shiftm.shiftm.domain.shift.dto.response.*;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
 import com.shiftm.shiftm.domain.shift.service.ShiftService;
+import com.shiftm.shiftm.infra.file.ExcelFileService;
 import com.shiftm.shiftm.infra.geocoding.GeocodingService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +30,7 @@ public class AdminShiftController {
     private final ShiftService shiftService;
     private final ShiftRepository shiftRespository;
     private final GeocodingService geocodingService;
+    private final ExcelFileService excelFileService;
 
     // 전체 근무 기록 조회
     @GetMapping
@@ -74,15 +77,9 @@ public class AdminShiftController {
 
     // 엑셀 파일 변환
     @GetMapping("/export")
-    public void exportShiftRecords(HttpServletResponse response) throws IOException {
+    public void exportShiftRecords(final HttpServletResponse response) {
         final List<Shift> shifts = shiftRespository.findAll();
-        final byte[] excelData = shiftService.exportShiftToExcel(shifts);
-
-        final String encodedFileName = URLEncoder.encode("근무기록.xlsx", "UTF-8").replaceAll("\\+", "%20");
-        response.setHeader("Content-Disposition", "attachment; filename=" + encodedFileName);
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-
-        response.getOutputStream().write(excelData);
-        response.flushBuffer();
+        // TODO 근무기록 엑셀 파일 양식 설정
+        excelFileService.generateExcelFile(response, shifts);
     }
 }
