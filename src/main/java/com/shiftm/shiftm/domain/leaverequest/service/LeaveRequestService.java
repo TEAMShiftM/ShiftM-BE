@@ -15,6 +15,8 @@ import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
 import com.shiftm.shiftm.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,10 +78,10 @@ public class LeaveRequestService {
     }
 
     @Transactional(readOnly = true)
-    public List<LeaveRequest> getRequestLeaveInfos(final String memberId) {
+    public Page<LeaveRequest> getRequestLeaveInfos(final String memberId, final Pageable pageable) {
         final Member member = memberDao.findById(memberId);
 
-        return leaveRequestRepository.findByMember(member);
+        return leaveRequestRepository.findByMember(member, pageable);
     }
 
     @Transactional
@@ -100,15 +102,15 @@ public class LeaveRequestService {
     }
 
     @Transactional(readOnly = true)
-    public List<LeaveRequest> getAllLeaveRequests() {
-        return leaveRequestRepository.findAll();
+    public Page<LeaveRequest> getAllLeaveRequests(final Pageable pageable) {
+        return leaveRequestRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)
-    public List<LeaveRequest> getLeaveRequest(final String memberId) {
+    public Page<LeaveRequest> getLeaveRequest(final String memberId, final Pageable pageable) {
         final Member member = memberDao.findById(memberId);
 
-        return leaveRequestRepository.findByMember(member);
+        return leaveRequestRepository.findByMember(member, pageable);
     }
 
     @Transactional

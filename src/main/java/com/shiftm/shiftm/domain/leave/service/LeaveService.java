@@ -13,6 +13,8 @@ import com.shiftm.shiftm.domain.member.exception.MemberNotFoundException;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
 import com.shiftm.shiftm.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,22 +75,22 @@ public class LeaveService {
     }
 
     @Transactional(readOnly = true)
-    public List<Leave> getLeaveInfo(final String memberId) {
+    public Page<Leave> getLeaveInfo(final String memberId, final Pageable pageable) {
         final Member member = memberDao.findById(memberId);
 
-        return leaveRepository.findByMember(member);
+        return leaveRepository.findByMember(member, pageable);
     }
 
     @Transactional(readOnly = true)
-    public List<Leave> getLeaves() {
-        return leaveRepository.findAll();
+    public Page<Leave> getLeaves(final Pageable pageable) {
+        return leaveRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)
-    public List<Leave> getLeave(final String memberId) {
+    public Page<Leave> getLeave(final Pageable pageable, final String memberId) {
         final Member member = memberDao.findById(memberId);
 
-        return leaveRepository.findByMember(member);
+        return leaveRepository.findByMember(member, pageable);
     }
 
     private Leave toEntity(final CreateLeaveRequest requestDto, final LeaveType leaveType) {
