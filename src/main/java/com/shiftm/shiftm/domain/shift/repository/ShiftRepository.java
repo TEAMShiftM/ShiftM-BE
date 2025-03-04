@@ -18,12 +18,14 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
             "WHERE s.member = :member AND s.checkin.checkinTime >= :start AND s.checkin.checkinTime <= :end")
     boolean existsByMemberAndCheckinTimeInRange(Member member, LocalDateTime start, LocalDateTime end);
 
-    @Query("SELECT s FROM Shift s WHERE s.member = :member AND s.checkin.checkinTime >= :start AND s.checkin.checkinTime <= :end")
+    @Query("SELECT s FROM Shift s WHERE s.member = :member AND s.checkin.checkinTime >= :start AND s.checkin.checkinTime <= :end " +
+            "AND s.deleted = 0")
     Optional<Shift> findShiftByMemberAndCheckinTimeInRange(Member member, LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT s FROM Shift s WHERE s.member = :member " +
             "AND (:start IS NULL OR s.checkin.checkinTime >= :start) " +
-            "AND (:end IS NULL OR s.checkin.checkinTime <= :end)")
+            "AND (:end IS NULL OR s.checkin.checkinTime <= :end) " +
+            "AND s.deleted = 0")
     List<Shift> findShiftsByMemberAndCheckinTimeInRange(Member member, LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT s FROM Shift s WHERE s.member.name = :name")

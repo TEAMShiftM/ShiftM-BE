@@ -7,6 +7,7 @@ import com.shiftm.shiftm.domain.shift.dto.response.AdminShiftListResponse;
 import com.shiftm.shiftm.domain.shift.dto.response.AdminShiftResponse;
 import com.shiftm.shiftm.domain.shift.dto.response.AfterCheckinListResponse;
 import com.shiftm.shiftm.domain.shift.dto.response.AfterCheckinResponse;
+import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
 import com.shiftm.shiftm.domain.shift.service.ShiftService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class AdminShiftController {
 
     private final ShiftService shiftService;
+    private final ShiftRepository shiftRespository;
 
     // 전체 근무 기록 조회
     @GetMapping
@@ -61,5 +63,11 @@ public class AdminShiftController {
     @PatchMapping("/{shiftId}")
     public AdminShiftResponse updateShift(@PathVariable final Long shiftId, @Valid @RequestBody final ShiftRequest requestDto) {
         return new AdminShiftResponse(shiftService.updateShift(shiftId, requestDto));
+    }
+
+    // 근무 기록 삭제
+    @DeleteMapping("/{shiftId}")
+    public void deleteShift(@PathVariable final Long shiftId) {
+        shiftRespository.deleteById(shiftId);
     }
 }

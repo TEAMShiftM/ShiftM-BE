@@ -7,11 +7,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "update shifts set deleted = 1 where id = ?")
 @Table(name = "shifts")
 @Entity
 public class Shift {
@@ -28,6 +30,9 @@ public class Shift {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Column
+    private int deleted = 0; // TODO deletedAt으로 변경 (삭제 시간 저장)
 
     @Builder
     public Shift(final Checkin checkin, final Checkout checkout, final Member member) {
