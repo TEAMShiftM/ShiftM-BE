@@ -20,6 +20,9 @@ public class LeaveTypeController {
     @GetMapping
     public List<LeaveTypeResponse> getLeaveTypes() {
         final List<LeaveType> leaveTypes = leaveTypeService.getLeaveTypes();
-        return leaveTypes.stream().map(LeaveTypeResponse::new).toList();
+
+        return leaveTypes.stream()
+                .map(LeaveTypeResponse::new)
+                .toList();
     }
 }

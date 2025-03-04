@@ -55,4 +55,8 @@ public class Leave {
         this.usedCount = usedCount;
         this.expirationDate = expirationDate;
     }
+
+    public void updateUsedCount(final Double usedCount) {
+        this.usedCount = usedCount;
+    }
 }

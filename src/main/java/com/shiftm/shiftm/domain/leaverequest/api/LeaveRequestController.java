@@ -3,11 +3,15 @@ package com.shiftm.shiftm.domain.leaverequest.api;
 import com.shiftm.shiftm.domain.leaverequest.domain.LeaveRequest;
 import com.shiftm.shiftm.domain.leaverequest.dto.request.RequestLeaveRequest;
 import com.shiftm.shiftm.domain.leaverequest.dto.request.UpdateLeaveRequestRequest;
+import com.shiftm.shiftm.domain.leaverequest.dto.response.LeaveRequestListResponse;
 import com.shiftm.shiftm.domain.leaverequest.dto.response.LeaveRequestResponse;
 import com.shiftm.shiftm.domain.leaverequest.service.LeaveRequestService;
 import com.shiftm.shiftm.global.auth.annotation.AuthId;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,12 +29,17 @@ public class LeaveRequestController {
     }
 
     @GetMapping
-    public List<LeaveRequestResponse> getRequestLeaveInfos(@AuthId final String memberId) {
-        final List<LeaveRequest> requests = leaveRequestService.getRequestLeaveInfos(memberId);
+    public LeaveRequestListResponse getRequestLeaveInfos(@AuthId final String memberId, @RequestParam(defaultValue = "0") final int page,
+                                                         @RequestParam(defaultValue = "10") final int size) {
+        final Pageable pageable = PageRequest.of(page, size);
 
-        return requests.stream()
-                .map(request -> new LeaveRequestResponse(request))
+        final Page<LeaveRequest> leaveRequests = leaveRequestService.getRequestLeaveInfos(memberId, pageable);
+
+        final List<LeaveRequestResponse> content = leaveRequests.getContent().stream()
+                .map(LeaveRequestResponse::new)
                 .toList();
+
+        return new LeaveRequestListResponse(content, page, size, leaveRequests.getTotalPages(), leaveRequests.getTotalElements());
     }
 
     @PatchMapping("/{leaveRequestId}")

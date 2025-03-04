@@ -8,12 +8,15 @@ import com.shiftm.shiftm.domain.leaverequest.dto.request.RequestLeaveRequest;
 import com.shiftm.shiftm.domain.leaverequest.dto.request.UpdateLeaveRequestRequest;
 import com.shiftm.shiftm.domain.leaverequest.exception.LeaveNotEnoughException;
 import com.shiftm.shiftm.domain.leaverequest.exception.LeaveRequestNotAuthorException;
+import com.shiftm.shiftm.domain.leaverequest.exception.LeaveRequestNotFoundException;
 import com.shiftm.shiftm.domain.leaverequest.exception.LeaveRequestUpdateFailedException;
 import com.shiftm.shiftm.domain.leaverequest.repository.LeaveRequestRepository;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
 import com.shiftm.shiftm.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,10 +78,10 @@ public class LeaveRequestService {
     }
 
     @Transactional(readOnly = true)
-    public List<LeaveRequest> getRequestLeaveInfos(final String memberId) {
+    public Page<LeaveRequest> getRequestLeaveInfos(final String memberId, final Pageable pageable) {
         final Member member = memberDao.findById(memberId);
 
-        return leaveRequestRepository.findByMemberOrderByIdDesc(member);
+        return leaveRequestRepository.findByMember(member, pageable);
     }
 
     @Transactional
@@ -98,7 +101,44 @@ public class LeaveRequestService {
         leaveRequest.updateStatus(request.status());
     }
 
+    @Transactional(readOnly = true)
+    public Page<LeaveRequest> getAllLeaveRequests(final Pageable pageable) {
+        return leaveRequestRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<LeaveRequest> getLeaveRequest(final String memberId, final Pageable pageable) {
+        final Member member = memberDao.findById(memberId);
+
+        return leaveRequestRepository.findByMember(member, pageable);
+    }
+
+    @Transactional
+    public void updateLeaveRequestStatus(Long leaveRequestId, UpdateLeaveRequestRequest requestDto) {
+        final LeaveRequest leaveRequest = findById(leaveRequestId);
+
+        final Double usedCount = leaveRequest.getLeave().getUsedCount();
+
+        if (leaveRequest.getStatus() != Status.APPROVED && requestDto.status() == Status.APPROVED) {
+            leaveRequest.getLeave().updateUsedCount(usedCount + leaveRequest.getCount());
+        }
+
+        if (leaveRequest.getStatus() == Status.APPROVED && requestDto.status() != Status.APPROVED) {
+            increaseLeaveCount(leaveRequest.getLeave(), leaveRequest.getCount());
+        }
+
+        leaveRequest.updateStatus(requestDto.status());
+    }
+
     private LeaveRequest findById(final Long leaveRequestId) {
-        return leaveRequestRepository.findById(leaveRequestId).orElse(null);
+        return leaveRequestRepository.findById(leaveRequestId).orElseThrow(LeaveRequestNotFoundException::new);
+    }
+
+    private void increaseLeaveCount(final Leave leave, final Double count) {
+        if (leave.getUsedCount() < 0 || count < 0) {
+            throw new LeaveRequestUpdateFailedException(ErrorCode.LEAVE_REQUEST_UPDATE_FAILED);
+        }
+
+        leave.updateUsedCount(leave.getUsedCount() - count);
     }
 }
