@@ -9,6 +9,7 @@ import com.shiftm.shiftm.domain.member.dto.request.UpdateRequest;
 import com.shiftm.shiftm.domain.member.dto.request.VerifyEmailCodeRequest;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedEmailException;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedIdException;
+import com.shiftm.shiftm.domain.member.exception.PasswordNotMatchException;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
 import com.shiftm.shiftm.domain.member.repository.MemberRepository;
 import com.shiftm.shiftm.infra.email.MailSender;
@@ -86,8 +87,15 @@ public class MemberService {
         return member;
     }
 
+    @Transactional
     public void updatePassword(final String memberId, final UpdatePasswordRequest requestDto) {
+        final Member member = memberDao.findById(memberId);
 
+        if (!requestDto.currentPassword().matches(member.getPassword())) {
+            throw new PasswordNotMatchException();
+        }
+
+        member.setPassword(passwordEncoder.encode(requestDto.newPassword()));
     }
 
     private String createVerificationCode() {

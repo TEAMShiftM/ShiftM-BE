@@ -13,6 +13,7 @@ public enum ErrorCode {
     DUPLICATED_ID(400, "MEM001", "It Is Duplicated ID"),
     DUPLICATED_EMAIL(400, "MEM002", "It Is Duplicated Email"),
     MEMBER_NOT_FOUND(400, "MEM003", "Member Not Found"),
+    PASSWORD_NOT_MATCH(400, "MEM004", "Password Not Match"),
 
     /* AUTH ERROR */
     INVALID_PASSWORD(400, "AUTH001", "It Is Invalid Password"),
