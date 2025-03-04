@@ -5,7 +5,10 @@ import com.shiftm.shiftm.domain.leave.repository.LeaveRepository;
 import com.shiftm.shiftm.domain.leaverequest.domain.LeaveRequest;
 import com.shiftm.shiftm.domain.leaverequest.domain.enums.Status;
 import com.shiftm.shiftm.domain.leaverequest.dto.request.RequestLeaveRequest;
+import com.shiftm.shiftm.domain.leaverequest.dto.request.UpdateLeaveRequestRequest;
 import com.shiftm.shiftm.domain.leaverequest.exception.LeaveNotEnoughException;
+import com.shiftm.shiftm.domain.leaverequest.exception.LeaveRequestNotAuthorException;
+import com.shiftm.shiftm.domain.leaverequest.exception.LeaveRequestUpdateFailedException;
 import com.shiftm.shiftm.domain.leaverequest.repository.LeaveRequestRepository;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
@@ -73,8 +76,29 @@ public class LeaveRequestService {
 
     @Transactional(readOnly = true)
     public List<LeaveRequest> getRequestLeaveInfos(final String memberId) {
-        Member member = memberDao.findById(memberId);
+        final Member member = memberDao.findById(memberId);
 
         return leaveRequestRepository.findByMemberOrderByIdDesc(member);
+    }
+
+    @Transactional
+    public void updateLeaveRequest(final String memberId, final Long leaveRequestId, final UpdateLeaveRequestRequest request) {
+        final Member member = memberDao.findById(memberId);
+
+        final LeaveRequest leaveRequest = findById(leaveRequestId);
+
+        if (member != leaveRequest.getMember()) {
+            throw new LeaveRequestNotAuthorException(ErrorCode.LEAVE_REQUEST_NOT_AUTHOR);
+        }
+
+        if (leaveRequest.getStatus() != Status.PENDING || leaveRequest.getStatus() != Status.CANCELED) {
+            throw new LeaveRequestUpdateFailedException(ErrorCode.LEAVE_REQUEST_UPDATE_FAILED);
+        }
+
+        leaveRequest.updateStatus(request.status());
+    }
+
+    private LeaveRequest findById(final Long leaveRequestId) {
+        return leaveRequestRepository.findById(leaveRequestId).orElse(null);
     }
 }

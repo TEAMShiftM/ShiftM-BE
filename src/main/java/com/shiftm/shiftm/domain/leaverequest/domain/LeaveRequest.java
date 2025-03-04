@@ -56,4 +56,8 @@ public class LeaveRequest {
     public void updateLeave(final Leave leave) {
         this.leave = leave;
     }
+
+    public void updateStatus(final Status status) {
+        this.status = status;
+    }
 }

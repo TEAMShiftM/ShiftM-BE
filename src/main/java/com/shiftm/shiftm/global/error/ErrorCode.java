@@ -30,7 +30,9 @@ public enum ErrorCode {
     COMPANY_NOT_FOUND(404, "COMPANY002", "Company Not Found"),
 
     /* LEAVE REQUEST ERROR */
-    LEAVE_NOT_ENOUGH(400, "LVR001", "Leave Not Enough");
+    LEAVE_NOT_ENOUGH(400, "LVR001", "Leave Not Enough"),
+    LEAVE_REQUEST_NOT_AUTHOR(401, "LVR002", "Not the author."),
+    LEAVE_REQUEST_UPDATE_FAILED(400, "LVR003", "Leave request Update failed.");
 
     private final int status;
     private final String code;
