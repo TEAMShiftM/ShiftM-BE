@@ -70,4 +70,11 @@ public class LeaveRequestService {
 
         leaveRequestRepository.saveAll(leaveRequests);
     }
+
+    @Transactional(readOnly = true)
+    public List<LeaveRequest> getRequestLeaveInfos(final String memberId) {
+        Member member = memberDao.findById(memberId);
+
+        return leaveRequestRepository.findByMemberOrderByIdDesc(member);
+    }
 }
