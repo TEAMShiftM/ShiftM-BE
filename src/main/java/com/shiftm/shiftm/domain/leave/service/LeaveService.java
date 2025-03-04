@@ -72,6 +72,13 @@ public class LeaveService {
         return new LeaveCountResponse(leaveIds, usableCount);
     }
 
+    @Transactional(readOnly = true)
+    public List<Leave> getLeaveInfo(final String memberId) {
+        final Member member = memberDao.findById(memberId);
+
+        return leaveRepository.findByMember(member);
+    }
+
     private Leave toEntity(final CreateLeaveRequest requestDto, final LeaveType leaveType) {
         final Leave leave = requestDto.toEntity();
 

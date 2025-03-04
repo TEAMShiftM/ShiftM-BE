@@ -1,6 +1,7 @@
 package com.shiftm.shiftm.domain.leave.repository;
 
 import com.shiftm.shiftm.domain.leave.domain.Leave;
+import com.shiftm.shiftm.domain.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,4 +15,6 @@ public interface LeaveRepository extends JpaRepository<Leave, Long> {
             "AND leavetype.id = :leaveTypeId " +
             "AND leave.count - leave.usedCount > 0 ORDER BY leave.expirationDate ASC ")
     List<Leave> findLeaves(@Param("memberId") final String memberId, @Param("leaveTypeId") final Long leaveTypeId, @Param("today") final LocalDate today);
+
+    List<Leave> findByMember(final Member member);
 }
