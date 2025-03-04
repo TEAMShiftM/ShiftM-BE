@@ -83,7 +83,7 @@ public class MemberService {
         member.setEmail(requestDto.email());
         member.setName(requestDto.name());
         member.setBirthDate(requestDto.birthDate());
-        member.setGender(Gender.valueOf(requestDto.gender()));
+        member.setGender(Gender.valueOf(requestDto.gender().toUpperCase()));
 
         return member;
     }
@@ -92,7 +92,7 @@ public class MemberService {
     public void updatePassword(final String memberId, final UpdatePasswordRequest requestDto) {
         final Member member = memberDao.findById(memberId);
 
-        if (!requestDto.currentPassword().matches(member.getPassword())) {
+        if (!passwordEncoder.matches(requestDto.currentPassword(), member.getPassword())) {
             throw new PasswordNotMatchException();
         }
 
