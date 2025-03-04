@@ -4,6 +4,7 @@ import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.domain.enums.Gender;
 import com.shiftm.shiftm.domain.member.domain.enums.Role;
 import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
+import com.shiftm.shiftm.domain.member.dto.request.UpdatePasswordRequest;
 import com.shiftm.shiftm.domain.member.dto.request.UpdateRequest;
 import com.shiftm.shiftm.domain.member.dto.request.VerifyEmailCodeRequest;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedEmailException;
@@ -83,6 +84,10 @@ public class MemberService {
         member.setGender(Gender.valueOf(requestDto.gender()));
 
         return member;
+    }
+
+    public void updatePassword(final String memberId, final UpdatePasswordRequest requestDto) {
+
     }
 
     private String createVerificationCode() {
