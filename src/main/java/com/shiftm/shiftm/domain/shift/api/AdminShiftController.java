@@ -3,12 +3,10 @@ package com.shiftm.shiftm.domain.shift.api;
 import com.shiftm.shiftm.domain.shift.domain.Shift;
 import com.shiftm.shiftm.domain.shift.dto.request.ShiftRequest;
 import com.shiftm.shiftm.domain.shift.dto.request.ShiftStatusRequest;
-import com.shiftm.shiftm.domain.shift.dto.response.AdminShiftListResponse;
-import com.shiftm.shiftm.domain.shift.dto.response.AdminShiftResponse;
-import com.shiftm.shiftm.domain.shift.dto.response.AfterCheckinListResponse;
-import com.shiftm.shiftm.domain.shift.dto.response.AfterCheckinResponse;
+import com.shiftm.shiftm.domain.shift.dto.response.*;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
 import com.shiftm.shiftm.domain.shift.service.ShiftService;
+import com.shiftm.shiftm.infra.geocoding.GeocodingService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +27,7 @@ public class AdminShiftController {
 
     private final ShiftService shiftService;
     private final ShiftRepository shiftRespository;
+    private final GeocodingService geocodingService;
 
     // 전체 근무 기록 조회
     @GetMapping
@@ -45,9 +44,12 @@ public class AdminShiftController {
     @GetMapping("/after-checkin")
     public AfterCheckinListResponse getAfterCheckin(@PageableDefault Pageable pageable,
                                                     @RequestParam(required = false) final String name) {
-        Page<Shift> shiftPage = shiftService.getAfterCheckin(pageable, name);
-        final List<AfterCheckinResponse> shifts = shiftPage.getContent().stream()
-                .map(shift -> new AfterCheckinResponse(shift))
+        final Page<Shift> shiftPage = shiftService.getAfterCheckin(pageable, name);
+        final List<AdminAfterCheckinResponse> shifts = shiftPage.getContent().stream()
+                .map(shift -> {
+                    String address = geocodingService.getAddress(shift.getCheckin().getLatitude(), shift.getCheckin().getLongitude());
+                    return new AdminAfterCheckinResponse(shift, address);
+                })
                 .collect(Collectors.toList());
         return new AfterCheckinListResponse(shifts, shiftPage.getNumber(), shiftPage.getSize(), shiftPage.getTotalPages(), shiftPage.getTotalElements());
     }

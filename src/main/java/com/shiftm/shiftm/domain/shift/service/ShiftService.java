@@ -8,6 +8,7 @@ import com.shiftm.shiftm.domain.shift.dto.request.*;
 import com.shiftm.shiftm.domain.shift.exception.CheckinAlreadyExistsException;
 import com.shiftm.shiftm.domain.shift.exception.ShiftNotFoundException;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
+import com.shiftm.shiftm.infra.geocoding.GeocodingService;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -32,6 +33,7 @@ public class ShiftService {
     private static final LocalTime PIVOT_TIME = LocalTime.of(4, 0);
 
     private final ShiftRepository shiftRepository;
+    private final GeocodingService geocodingService;
     private final MemberDao memberDao;
 
     @Transactional
