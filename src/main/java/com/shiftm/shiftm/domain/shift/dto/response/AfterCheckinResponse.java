@@ -5,7 +5,7 @@ import com.shiftm.shiftm.domain.shift.domain.enums.Status;
 
 import java.time.LocalDateTime;
 
-public record AfterCheckinResponse (
+public record AfterCheckinResponse(
         Long id,
         LocalDateTime checkinTime,
         Double latitude,
