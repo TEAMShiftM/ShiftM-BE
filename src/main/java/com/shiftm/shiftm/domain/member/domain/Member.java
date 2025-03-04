@@ -4,10 +4,7 @@ import com.shiftm.shiftm.domain.member.domain.enums.Gender;
 import com.shiftm.shiftm.domain.member.domain.enums.Role;
 import com.shiftm.shiftm.domain.member.domain.enums.Status;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -19,18 +16,23 @@ public class Member {
     @Id
     private String id;
 
+    @Setter
     @Column(nullable = false)
     private String password;
 
+    @Setter
     @Column(nullable = false)
     private String email;
 
+    @Setter
     @Column(nullable = false)
     private String name;
 
+    @Setter
     @Column(nullable = false)
     private LocalDate birthDate;
 
+    @Setter
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -38,6 +40,7 @@ public class Member {
     @Column
     private LocalDate entryDate;
 
+    @Setter
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;

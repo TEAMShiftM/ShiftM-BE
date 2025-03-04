@@ -2,6 +2,8 @@ package com.shiftm.shiftm.domain.member.api;
 
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
+import com.shiftm.shiftm.domain.member.dto.request.UpdatePasswordRequest;
+import com.shiftm.shiftm.domain.member.dto.request.UpdateRequest;
 import com.shiftm.shiftm.domain.member.dto.request.VerifyEmailCodeRequest;
 import com.shiftm.shiftm.domain.member.dto.response.CheckResponse;
 import com.shiftm.shiftm.domain.member.dto.response.MemberResponse;
@@ -44,5 +46,21 @@ public class MemberController {
     public MemberResponse getProfile(@AuthId final String memberId) {
         final Member member = memberService.getProfile(memberId);
         return new MemberResponse(member);
+    }
+
+    @PatchMapping("/me")
+    public MemberResponse updateProfile(@AuthId final String memberId, @Valid @RequestBody final UpdateRequest requestDto) {
+        final Member member = memberService.updateProfile(memberId, requestDto);
+        return new MemberResponse(member);
+    }
+
+    @PatchMapping("/me/password")
+    public void updatePassword(@AuthId final String memberId, @Valid @RequestBody final UpdatePasswordRequest requestDto) {
+        memberService.updatePassword(memberId, requestDto);
+    }
+
+    @DeleteMapping("/me")
+    public void withdraw(@AuthId final String memberId) {
+        memberService.withdraw(memberId);
     }
 }

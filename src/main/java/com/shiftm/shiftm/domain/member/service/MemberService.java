@@ -1,11 +1,16 @@
 package com.shiftm.shiftm.domain.member.service;
 
 import com.shiftm.shiftm.domain.member.domain.Member;
+import com.shiftm.shiftm.domain.member.domain.enums.Gender;
 import com.shiftm.shiftm.domain.member.domain.enums.Role;
+import com.shiftm.shiftm.domain.member.domain.enums.Status;
 import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
+import com.shiftm.shiftm.domain.member.dto.request.UpdatePasswordRequest;
+import com.shiftm.shiftm.domain.member.dto.request.UpdateRequest;
 import com.shiftm.shiftm.domain.member.dto.request.VerifyEmailCodeRequest;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedEmailException;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedIdException;
+import com.shiftm.shiftm.domain.member.exception.PasswordNotMatchException;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
 import com.shiftm.shiftm.domain.member.repository.MemberRepository;
 import com.shiftm.shiftm.infra.email.MailSender;
@@ -69,6 +74,36 @@ public class MemberService {
     @Transactional
     public Member getProfile(final String memberId) {
         return memberDao.findById(memberId);
+    }
+
+    @Transactional
+    public Member updateProfile(final String memberId, final UpdateRequest requestDto) {
+        final Member member = memberDao.findById(memberId);
+
+        member.setEmail(requestDto.email());
+        member.setName(requestDto.name());
+        member.setBirthDate(requestDto.birthDate());
+        member.setGender(Gender.valueOf(requestDto.gender().toUpperCase()));
+
+        return member;
+    }
+
+    @Transactional
+    public void updatePassword(final String memberId, final UpdatePasswordRequest requestDto) {
+        final Member member = memberDao.findById(memberId);
+
+        if (!passwordEncoder.matches(requestDto.currentPassword(), member.getPassword())) {
+            throw new PasswordNotMatchException();
+        }
+
+        member.setPassword(passwordEncoder.encode(requestDto.newPassword()));
+    }
+
+    @Transactional
+    public void withdraw(final String memberId) {
+        final Member member = memberDao.findById(memberId);
+
+        member.setStatus(Status.INACTIVE);
     }
 
     private String createVerificationCode() {
