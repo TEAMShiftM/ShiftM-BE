@@ -1,6 +1,7 @@
 package com.shiftm.shiftm.domain.member.service;
 
 import com.shiftm.shiftm.domain.member.domain.Member;
+import com.shiftm.shiftm.domain.member.domain.enums.Gender;
 import com.shiftm.shiftm.domain.member.domain.enums.Role;
 import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
 import com.shiftm.shiftm.domain.member.dto.request.UpdateRequest;
@@ -74,7 +75,14 @@ public class MemberService {
 
     @Transactional
     public Member updateProfile(final String memberId, final UpdateRequest requestDto) {
+        final Member member = memberDao.findById(memberId);
 
+        member.setEmail(requestDto.email());
+        member.setName(requestDto.name());
+        member.setBirthDate(requestDto.birthDate());
+        member.setGender(Gender.valueOf(requestDto.gender()));
+
+        return member;
     }
 
     private String createVerificationCode() {
