@@ -23,33 +23,31 @@ public class ShiftController {
     private final ShiftService shiftService;
 
     @PostMapping("/check-in")
-    public CheckinResponse createCheckin(@AuthId String memberId, @Valid @RequestBody final CheckinRequest requestDto) {
+    public CheckinResponse createCheckin(@AuthId final String memberId, @Valid @RequestBody final CheckinRequest requestDto) {
         final Shift shift = shiftService.createCheckin(memberId, requestDto);
         return new CheckinResponse(shift);
     }
 
     @PostMapping("/check-in/after")
-    public AfterCheckinResponse createAfterCheckin(@AuthId String memberId, @Valid @RequestBody final AfterCheckinRequest requestDto) {
+    public AfterCheckinResponse createAfterCheckin(@AuthId final String memberId, @Valid @RequestBody final AfterCheckinRequest requestDto) {
         final Shift shift = shiftService.createAfterCheckin(memberId, requestDto);
         return new AfterCheckinResponse(shift);
     }
 
     @PatchMapping("/check-out")
-    public CheckoutResponse createCheckout(@AuthId String memberId, @Valid @RequestBody final CheckoutRequest requestDto) {
+    public CheckoutResponse createCheckout(@AuthId final String memberId, @Valid @RequestBody final CheckoutRequest requestDto) {
         final Shift shift = shiftService.createCheckout(memberId, requestDto);
         return new CheckoutResponse(shift);
     }
 
     @GetMapping
-    public ShiftListResponse getShiftsInRange(@AuthId String memberId, @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
+    public ShiftListResponse getShiftsInRange(@AuthId final String memberId,
+                                              @RequestParam(required = false) final LocalDate startDate,
+                                              @RequestParam(required = false) final LocalDate endDate) {
         final LocalDate today = LocalDate.now();
-        if (startDate == null) {
-            startDate = today.minusYears(100);
-        }
-        if (endDate == null) {
-            endDate = today;
-        }
-        final List<ShiftResponse> shifts = shiftService.getShiftsInRange(memberId, startDate, endDate).stream()
+        final LocalDate actualStartDate = (startDate != null) ? startDate : LocalDate.of(2025, 3, 1);
+        final LocalDate actualEndDate = (endDate != null) ? endDate : today;
+        final List<ShiftResponse> shifts = shiftService.getShiftsInRange(memberId, actualStartDate, actualEndDate).stream()
                 .map(shift -> new ShiftResponse(shift))
                 .collect(Collectors.toList());
         return new ShiftListResponse(shifts);

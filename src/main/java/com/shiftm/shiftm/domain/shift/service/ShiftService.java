@@ -9,7 +9,6 @@ import com.shiftm.shiftm.domain.shift.dto.request.CheckoutRequest;
 import com.shiftm.shiftm.domain.shift.exception.CheckinAlreadyExistsException;
 import com.shiftm.shiftm.domain.shift.exception.ShiftNotFoundException;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
-import com.shiftm.shiftm.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,13 +52,13 @@ public class ShiftService {
         final Member member = memberDao.findById(memberId);
         final LocalDateTime start = date.atStartOfDay();
         final LocalDateTime end = start.plusDays(1).minusNanos(1);
-        Shift shift = shiftRepository.findShiftByMemberAndCheckin_CheckinTimeBetween(member, start, end)
+        final Shift shift = shiftRepository.findShiftByMemberAndCheckin_CheckinTimeBetween(member, start, end)
                 .orElseThrow(() -> new ShiftNotFoundException());
         return shift;
     }
 
     @Transactional(readOnly = true)
-    public List<Shift> getShiftsInRange(String memberId, LocalDate startDate, LocalDate endDate) {
+    public List<Shift> getShiftsInRange(final String memberId, final LocalDate startDate, final LocalDate endDate) {
         final Member member = memberDao.findById(memberId);
         final LocalDateTime start = startDate.atStartOfDay();
         final LocalDateTime end = endDate.plusDays(1).atStartOfDay().minusNanos(1);
