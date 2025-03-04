@@ -10,6 +10,8 @@ public record UpdateLeaveRequest(
         @NotNull
         LocalDate expirationDate,
         @NotNull
-        Double count
+        Double count,
+        @NotNull
+        Double usedCount
 ) {
 }

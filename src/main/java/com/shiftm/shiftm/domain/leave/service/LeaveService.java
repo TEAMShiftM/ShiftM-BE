@@ -4,6 +4,7 @@ import com.shiftm.shiftm.domain.leave.domain.Leave;
 import com.shiftm.shiftm.domain.leave.domain.LeaveType;
 import com.shiftm.shiftm.domain.leave.dto.request.CreateLeaveRequest;
 import com.shiftm.shiftm.domain.leave.dto.request.UpdateLeaveRequest;
+import com.shiftm.shiftm.domain.leave.dto.response.LeaveCountResponse;
 import com.shiftm.shiftm.domain.leave.repository.LeaveDao;
 import com.shiftm.shiftm.domain.leave.repository.LeaveRepository;
 import com.shiftm.shiftm.domain.leave.repository.LeaveTypeDao;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -52,7 +54,22 @@ public class LeaveService {
             leave.updateLeaveType(leaveType);
         }
 
-        leave.updateLeave(requestDto.count(), requestDto.expirationDate());
+        leave.updateLeave(requestDto.count(), requestDto.usedCount(), requestDto.expirationDate());
+    }
+
+    @Transactional(readOnly = true)
+    public LeaveCountResponse getCountByLeaveType(final String memberId, final Long leaveTypeId) {
+        final List<Leave> leaves = leaveRepository.findLeaves(memberId, leaveTypeId, LocalDate.now());
+
+        final Double usableCount = leaves.stream()
+                .mapToDouble(leave -> leave.getCount() - leave.getUsedCount())
+                .sum();
+
+        final List<Long> leaveIds = leaves.stream()
+                .map(Leave::getId)
+                .toList();
+
+        return new LeaveCountResponse(leaveIds, usableCount);
     }
 
     private Leave toEntity(final CreateLeaveRequest requestDto, final LeaveType leaveType) {
