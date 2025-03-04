@@ -5,6 +5,7 @@ import com.shiftm.shiftm.domain.leaverequest.domain.enums.Status;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,6 +27,9 @@ public class LeaveRequest {
     private LocalDate endDate;
 
     @Column(nullable = false)
+    private Double count;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 
@@ -36,4 +40,24 @@ public class LeaveRequest {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "leave_id")
     private Leave leave;
+
+    @Builder
+    public LeaveRequest(final LocalDate startDate, final LocalDate endDate, Double count, final Status status) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.count = count;
+        this.status = status;
+    }
+
+    public void updateMember(final Member member) {
+        this.member = member;
+    }
+
+    public void updateLeave(final Leave leave) {
+        this.leave = leave;
+    }
+
+    public void updateStatus(final Status status) {
+        this.status = status;
+    }
 }

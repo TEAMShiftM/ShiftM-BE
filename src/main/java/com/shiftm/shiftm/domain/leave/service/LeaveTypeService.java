@@ -3,7 +3,7 @@ package com.shiftm.shiftm.domain.leave.service;
 import com.shiftm.shiftm.domain.leave.domain.LeaveType;
 import com.shiftm.shiftm.domain.leave.dto.request.LeaveTypeRequest;
 import com.shiftm.shiftm.domain.leave.exception.DuplicatedNameException;
-import com.shiftm.shiftm.domain.leave.exception.NotFoundLeaveTypeException;
+import com.shiftm.shiftm.domain.leave.exception.LeaveTypeNotFoundException;
 import com.shiftm.shiftm.domain.leave.repository.LeaveTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,6 +44,6 @@ public class LeaveTypeService {
     }
 
     private LeaveType findById(final Long id) {
-        return leaveTypeRepository.findById(id).orElseThrow(() -> new NotFoundLeaveTypeException());
+        return leaveTypeRepository.findById(id).orElseThrow(() -> new LeaveTypeNotFoundException(id));
     }
 }

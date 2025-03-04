@@ -24,11 +24,16 @@ public enum ErrorCode {
 
     /* LEAVE TYPE ERROR */
     DUPLICATED_NAME(400, "LVT001", "It Is Duplicated Name"),
-    NOT_FOUND_LEAVE_TYPE(404, "LVT002", "Leave type not found"),
+    LEAVE_TYPE_NOT_FOUND(404, "LVT002", "Leave type not found"),
 
     /* COMPANY ERROR */
     COMPANY_ALREADY_EXISTS(404, "COMPANY001", "Company Is Already Exists"),
     COMPANY_NOT_FOUND(404, "COMPANY002", "Company Not Found"),
+
+    /* LEAVE REQUEST ERROR */
+    LEAVE_NOT_ENOUGH(400, "LVR001", "Leave Not Enough"),
+    LEAVE_REQUEST_NOT_AUTHOR(401, "LVR002", "Not the author."),
+    LEAVE_REQUEST_UPDATE_FAILED(400, "LVR003", "Leave request Update failed."),
 
     /* SHIFT ERROR */
     CHECKIN_ALREADY_EXISTS(404, "SHIFT001", "Checkin Is Already Exists"),
@@ -36,6 +41,7 @@ public enum ErrorCode {
   
     /* EMAIL ERROR */
     UNABLE_TO_SEND_EMAIL(500, "EMAIL001", "Unable To Send Email");
+
 
     private final int status;
     private final String code;
