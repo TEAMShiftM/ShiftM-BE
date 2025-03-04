@@ -30,6 +30,8 @@ public class SecurityConfig {
             "/member/check/id",
             "/member/check/email",
             "/member/check/email/code",
+            "/member/find/id",
+            "/member/find/password",
             "/auth/login",
             "/auth/reissue"
     };
