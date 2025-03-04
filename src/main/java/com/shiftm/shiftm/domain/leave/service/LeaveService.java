@@ -79,6 +79,18 @@ public class LeaveService {
         return leaveRepository.findByMember(member);
     }
 
+    @Transactional(readOnly = true)
+    public List<Leave> getLeaves() {
+        return leaveRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Leave> getLeave(final String memberId) {
+        final Member member = memberDao.findById(memberId);
+
+        return leaveRepository.findByMember(member);
+    }
+
     private Leave toEntity(final CreateLeaveRequest requestDto, final LeaveType leaveType) {
         final Leave leave = requestDto.toEntity();
 
