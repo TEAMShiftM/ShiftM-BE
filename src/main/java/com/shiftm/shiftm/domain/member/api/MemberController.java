@@ -39,6 +39,7 @@ public class MemberController {
         return new CheckResponse(isVerified);
     }
 
+    @GetMapping("/find/id")
     public void findId(@Valid @RequestBody final FindIdRequest requestDto) {
         memberService.findId(requestDto);
     }
