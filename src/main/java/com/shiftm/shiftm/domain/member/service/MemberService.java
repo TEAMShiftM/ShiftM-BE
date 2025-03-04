@@ -4,10 +4,7 @@ import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.domain.enums.Gender;
 import com.shiftm.shiftm.domain.member.domain.enums.Role;
 import com.shiftm.shiftm.domain.member.domain.enums.Status;
-import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
-import com.shiftm.shiftm.domain.member.dto.request.UpdatePasswordRequest;
-import com.shiftm.shiftm.domain.member.dto.request.UpdateRequest;
-import com.shiftm.shiftm.domain.member.dto.request.VerifyEmailCodeRequest;
+import com.shiftm.shiftm.domain.member.dto.request.*;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedEmailException;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedIdException;
 import com.shiftm.shiftm.domain.member.exception.PasswordNotMatchException;
@@ -69,6 +66,10 @@ public class MemberService {
     public boolean verifyEmailCode(final VerifyEmailCodeRequest requestDto) {
         final String storedVerificationCode = redisService.getValue("VERIFICATION_CODE:" + requestDto.email());
         return storedVerificationCode.equals(requestDto.verificationCode());
+    }
+
+    public void findId(final FindIdRequest requestDto) {
+
     }
 
     @Transactional

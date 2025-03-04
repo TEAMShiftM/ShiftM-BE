@@ -1,10 +1,7 @@
 package com.shiftm.shiftm.domain.member.api;
 
 import com.shiftm.shiftm.domain.member.domain.Member;
-import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
-import com.shiftm.shiftm.domain.member.dto.request.UpdatePasswordRequest;
-import com.shiftm.shiftm.domain.member.dto.request.UpdateRequest;
-import com.shiftm.shiftm.domain.member.dto.request.VerifyEmailCodeRequest;
+import com.shiftm.shiftm.domain.member.dto.request.*;
 import com.shiftm.shiftm.domain.member.dto.response.CheckResponse;
 import com.shiftm.shiftm.domain.member.dto.response.MemberResponse;
 import com.shiftm.shiftm.domain.member.service.MemberService;
@@ -40,6 +37,10 @@ public class MemberController {
     public CheckResponse verifyEmailCode(@Valid @RequestBody final VerifyEmailCodeRequest requestDto) {
         final boolean isVerified = memberService.verifyEmailCode(requestDto);
         return new CheckResponse(isVerified);
+    }
+
+    public void findId(@Valid @RequestBody final FindIdRequest requestDto) {
+        memberService.findId(requestDto);
     }
 
     @GetMapping("/me")
