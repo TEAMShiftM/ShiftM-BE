@@ -19,7 +19,7 @@ public class Leave {
     private Long id;
 
     @Column(nullable = false)
-    private Integer count;
+    private Double count;
 
     @Column(nullable = false)
     private LocalDate expirationDate;
@@ -33,7 +33,7 @@ public class Leave {
     private LeaveType leaveType;
 
     @Builder
-    public Leave(final Integer count, final LocalDate expirationDate) {
+    public Leave(final Double count, final LocalDate expirationDate) {
         this.count = count;
         this.expirationDate = expirationDate;
     }
@@ -46,7 +46,7 @@ public class Leave {
         this.leaveType = leaveType;
     }
 
-    public void updateLeave(final Integer count, final LocalDate expirationDate) {
+    public void updateLeave(final Double count, final LocalDate expirationDate) {
         this.count = count;
         this.expirationDate = expirationDate;
     }

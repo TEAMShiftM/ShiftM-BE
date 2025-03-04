@@ -1,7 +1,6 @@
 package com.shiftm.shiftm.domain.leave.dto.request;
 
 import com.shiftm.shiftm.domain.leave.domain.Leave;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -17,8 +16,7 @@ public record CreateLeaveRequest(
         @NotNull
         LocalDate expirationDate,
         @NotNull
-        @Min(value = 1)
-        Integer count
+        Double count
 ) {
     public Leave toEntity() {
         return Leave.builder()
