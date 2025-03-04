@@ -76,6 +76,10 @@ public class MemberService {
         mailSender.sendMail(requestDto.email(), "[ShiftM] 아이디 찾기", mailMessage);
     }
 
+    public void findPassword(final FindPasswordRequest requestDto) {
+
+    }
+
     @Transactional
     public Member getProfile(final String memberId) {
         return memberDao.findById(memberId);

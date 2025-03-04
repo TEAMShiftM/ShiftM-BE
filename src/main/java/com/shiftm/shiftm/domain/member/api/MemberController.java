@@ -44,6 +44,11 @@ public class MemberController {
         memberService.findId(requestDto);
     }
 
+    @GetMapping("/find/password")
+    public void findPassword(@Valid @RequestBody final FindPasswordRequest requestDto) {
+        memberService.findPassword(requestDto);
+    }
+
     @GetMapping("/me")
     public MemberResponse getProfile(@AuthId final String memberId) {
         final Member member = memberService.getProfile(memberId);
