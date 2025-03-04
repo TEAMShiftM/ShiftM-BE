@@ -3,6 +3,7 @@ package com.shiftm.shiftm.domain.member.service;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.domain.enums.Gender;
 import com.shiftm.shiftm.domain.member.domain.enums.Role;
+import com.shiftm.shiftm.domain.member.domain.enums.Status;
 import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
 import com.shiftm.shiftm.domain.member.dto.request.UpdatePasswordRequest;
 import com.shiftm.shiftm.domain.member.dto.request.UpdateRequest;
@@ -98,8 +99,11 @@ public class MemberService {
         member.setPassword(passwordEncoder.encode(requestDto.newPassword()));
     }
 
+    @Transactional
     public void withdraw(final String memberId) {
+        final Member member = memberDao.findById(memberId);
 
+        member.setStatus(Status.INACTIVE);
     }
 
     private String createVerificationCode() {
