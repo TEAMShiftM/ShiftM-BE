@@ -55,6 +55,9 @@ dependencies {
 
 	/* SWAGGER */
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
+
+	/* Excel */
+	implementation 'org.apache.poi:poi-ooxml:5.2.3'
 }
 
 tasks.named('test') {

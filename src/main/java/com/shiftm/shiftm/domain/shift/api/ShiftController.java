@@ -28,7 +28,7 @@ public class ShiftController {
         return new CheckinResponse(shift);
     }
 
-    @PostMapping("/check-in/after")
+    @PostMapping("/after-checkin")
     public AfterCheckinResponse createAfterCheckin(@AuthId final String memberId, @Valid @RequestBody final AfterCheckinRequest requestDto) {
         final Shift shift = shiftService.createAfterCheckin(memberId, requestDto);
         return new AfterCheckinResponse(shift);
