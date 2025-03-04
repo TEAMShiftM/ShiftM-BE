@@ -52,4 +52,6 @@ public class MemberController {
         final Member member = memberService.updateProfile(memberId, requestDto);
         return new MemberResponse(member);
     }
+
+
 }
