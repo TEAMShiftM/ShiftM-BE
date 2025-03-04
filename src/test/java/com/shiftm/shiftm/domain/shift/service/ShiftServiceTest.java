@@ -1,6 +1,5 @@
 package com.shiftm.shiftm.domain.shift.service;
 
-import com.shiftm.shiftm.domain.company.exception.CompanyAlreadyExistsException;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
 import com.shiftm.shiftm.domain.shift.domain.Checkin;
@@ -20,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -73,7 +71,7 @@ class ShiftServiceTest extends UnitTest {
         final CheckinRequest requestDto = new CheckinRequest(now);
 
         when(memberDao.findById(any())).thenReturn(member);
-        when(shiftRepository.existsByMemberAndCheckin_CheckinTimeBetween(any(), any(), any())).thenReturn(false);
+        when(shiftRepository.existsByMemberAndCheckinTimeInRange(any(), any(), any())).thenReturn(false);
         when(shiftRepository.save(any())).thenReturn(shift);
 
         // when
@@ -92,7 +90,7 @@ class ShiftServiceTest extends UnitTest {
         // given
         final CheckinRequest requestDto = new CheckinRequest(now);
 
-        when(shiftRepository.existsByMemberAndCheckin_CheckinTimeBetween(any(), any(), any())).thenReturn(true);
+        when(shiftRepository.existsByMemberAndCheckinTimeInRange(any(), any(), any())).thenReturn(true);
 
         // when, then
         assertThrows(CheckinAlreadyExistsException.class, () -> shiftService.createCheckin(member.getId(), requestDto));
@@ -105,7 +103,7 @@ class ShiftServiceTest extends UnitTest {
         final AfterCheckinRequest requestDto = new AfterCheckinRequest(now, 0.0, 0.0);
 
         when(memberDao.findById(any())).thenReturn(member);
-        when(shiftRepository.existsByMemberAndCheckin_CheckinTimeBetween(any(), any(), any())).thenReturn(false);
+        when(shiftRepository.existsByMemberAndCheckinTimeInRange(any(), any(), any())).thenReturn(false);
         when(shiftRepository.save(any())).thenReturn(shift);
 
         // when
@@ -126,7 +124,7 @@ class ShiftServiceTest extends UnitTest {
         // given
         final AfterCheckinRequest requestDto = new AfterCheckinRequest(now, 0.0, 0.0);
 
-        when(shiftRepository.existsByMemberAndCheckin_CheckinTimeBetween(any(), any(), any())).thenReturn(true);
+        when(shiftRepository.existsByMemberAndCheckinTimeInRange(any(), any(), any())).thenReturn(true);
 
         // when, then
         assertThrows(CheckinAlreadyExistsException.class, () -> shiftService.createAfterCheckin(member.getId(), requestDto));
@@ -139,7 +137,7 @@ class ShiftServiceTest extends UnitTest {
         final CheckoutRequest requestDto = new CheckoutRequest(now);
 
         when(memberDao.findById(any())).thenReturn(member);
-        when(shiftRepository.findShiftByMemberAndCheckin_CheckinTimeBetween(any(), any(), any())).thenReturn(Optional.of(shift));
+        when(shiftRepository.findShiftByMemberAndCheckinTimeInRange(any(), any(), any())).thenReturn(Optional.of(shift));
 
         // when
         final Shift createCheckout = shiftService.createCheckout(member.getId(), requestDto);
@@ -154,23 +152,71 @@ class ShiftServiceTest extends UnitTest {
         // given
         final CheckoutRequest requestDto = new CheckoutRequest(now);
 
-        when(shiftRepository.findShiftByMemberAndCheckin_CheckinTimeBetween(any(), any(), any())).thenReturn(Optional.empty());
+        when(shiftRepository.findShiftByMemberAndCheckinTimeInRange(any(), any(), any())).thenReturn(Optional.empty());
 
         // when, then
         assertThrows(ShiftNotFoundException.class, () -> shiftService.createCheckout(member.getId(), requestDto));
     }
 
-    @DisplayName("근무 기록 기간별 조회_성공")
+    @DisplayName("근무 기록 기간별 조회 성공")
     @Test
     public void 근무_기록_기간별_조회_성공() {
         // given
         final List<Shift> shifts = List.of(shift, shift);
 
         when(memberDao.findById(any())).thenReturn(member);
-        when(shiftRepository.findShiftsByMemberAndCheckin_CheckinTimeBetween(any(), any(), any())).thenReturn(shifts);
+        when(shiftRepository.findShiftsByMemberAndCheckinTimeInRange(any(), any(), any())).thenReturn(shifts);
 
         // when
         final List<Shift> getShifts = shiftService.getShiftsInRange(member.getId(), now.minusDays(2).toLocalDate(), now.toLocalDate());
+
+        // then
+        assertThat(getShifts).hasSize(2);
+    }
+
+    @DisplayName("근무 기록 기간별 조회 성공 - start가 null인 경우")
+    @Test
+    public void 근무_기록_기간별_조회_성공_start_null() {
+        // given
+        final List<Shift> shifts = List.of(shift, shift);
+
+        when(memberDao.findById(any())).thenReturn(member);
+        when(shiftRepository.findShiftsByMemberAndCheckinTimeInRange(any(), eq(null), any())).thenReturn(shifts);
+
+        // when
+        final List<Shift> getShifts = shiftService.getShiftsInRange(member.getId(), null, now.toLocalDate());
+
+        // then
+        assertThat(getShifts).hasSize(2);
+    }
+
+    @DisplayName("근무 기록 기간별 조회 성공 - end가 null인 경우")
+    @Test
+    public void 근무_기록_기간별_조회_성공_end_null() {
+        // given
+        final List<Shift> shifts = List.of(shift, shift);
+
+        when(memberDao.findById(any())).thenReturn(member);
+        when(shiftRepository.findShiftsByMemberAndCheckinTimeInRange(any(), any(), eq(null))).thenReturn(shifts);
+
+        // when
+        final List<Shift> getShifts = shiftService.getShiftsInRange(member.getId(), now.minusDays(2).toLocalDate(), null);
+
+        // then
+        assertThat(getShifts).hasSize(2);
+    }
+
+    @DisplayName("근무 기록 기간별 조회 성공 - start와 end가 null인 경우")
+    @Test
+    public void 근무_기록_기간별_조회_성공_start_end_null() {
+        // given
+        final List<Shift> shifts = List.of(shift, shift);
+
+        when(memberDao.findById(any())).thenReturn(member);
+        when(shiftRepository.findShiftsByMemberAndCheckinTimeInRange(any(), eq(null), eq(null))).thenReturn(shifts);
+
+        // when
+        final List<Shift> getShifts = shiftService.getShiftsInRange(member.getId(), null, null);
 
         // then
         assertThat(getShifts).hasSize(2);
