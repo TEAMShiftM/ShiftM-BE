@@ -3,6 +3,7 @@ package com.shiftm.shiftm.domain.member.api;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.dto.response.MemberResponse;
 import com.shiftm.shiftm.domain.member.service.MemberService;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,5 +26,9 @@ public class AdminMemberController {
                 .collect(Collectors.toList());
     }
 
-
+    @GetMapping("/{memberId}")
+    public MemberResponse getMember(@PathParam("memberId") final String memberId) {
+        final Member member = memberService.getProfile(memberId);
+        return new MemberResponse(member);
+    }
 }
