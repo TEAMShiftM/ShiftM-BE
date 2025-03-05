@@ -1,14 +1,13 @@
 package com.shiftm.shiftm.domain.member.api;
 
 import com.shiftm.shiftm.domain.member.domain.Member;
+import com.shiftm.shiftm.domain.member.dto.request.UpdateForAdminRequest;
 import com.shiftm.shiftm.domain.member.dto.response.MemberResponse;
 import com.shiftm.shiftm.domain.member.service.MemberService;
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +32,12 @@ public class AdminMemberController {
         return new MemberResponse(member);
     }
 
+    @PatchMapping("/{memberId}")
+    public MemberResponse updateMember(@PathParam("memberId") final String memberId,
+                                       @Valid @RequestBody final UpdateForAdminRequest requestDto) {
+        final Member member = memberService.updateProfileForAdmin(memberId, requestDto);
+        return new MemberResponse(member);
+    }
     @DeleteMapping("/{memberId}")
     public void withdrawMember(@PathParam("memberId") final String memberId) {
         memberService.withdraw(memberId);
