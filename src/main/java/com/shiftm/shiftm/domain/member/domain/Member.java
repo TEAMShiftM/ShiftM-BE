@@ -37,6 +37,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @Setter
     @Column
     private LocalDate entryDate;
 

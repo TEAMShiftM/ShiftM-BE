@@ -10,9 +10,10 @@ public record MemberResponse(
         String email,
         String name,
         LocalDate birthDate,
-        Gender gender
+        Gender gender,
+        LocalDate entryDate
 ) {
     public MemberResponse(final Member member) {
-        this(member.getId(), member.getEmail(), member.getName(), member.getBirthDate(), member.getGender());
+        this(member.getId(), member.getEmail(), member.getName(), member.getBirthDate(), member.getGender(), member.getEntryDate());
     }
 }
