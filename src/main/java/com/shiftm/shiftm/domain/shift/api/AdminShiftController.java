@@ -34,10 +34,10 @@ public class AdminShiftController {
 
     // 전체 근무 기록 조회
     @GetMapping
-    public AdminShiftListResponse getShifts(@PageableDefault Pageable pageable,
+    public AdminShiftListResponse getShifts(@PageableDefault final Pageable pageable,
                                             @RequestParam(required = false) final String name) {
-        Page<Shift> shiftPage = shiftService.getShifts(pageable, name);
-        List<AdminShiftResponse> shifts = shiftPage.getContent().stream()
+        final Page<Shift> shiftPage = shiftService.getShifts(pageable, name);
+        final List<AdminShiftResponse> shifts = shiftPage.getContent().stream()
                 .map(shift -> new AdminShiftResponse(shift))
                 .collect(Collectors.toList());
         return new AdminShiftListResponse(shifts, shiftPage.getNumber(), shiftPage.getSize(), shiftPage.getTotalPages(), shiftPage.getTotalElements());
@@ -45,12 +45,12 @@ public class AdminShiftController {
 
     // 사후 출근 신청 조회
     @GetMapping("/after-checkin")
-    public AfterCheckinListResponse getAfterCheckin(@PageableDefault Pageable pageable,
+    public AfterCheckinListResponse getAfterCheckin(@PageableDefault final Pageable pageable,
                                                     @RequestParam(required = false) final String name) {
         final Page<Shift> shiftPage = shiftService.getAfterCheckin(pageable, name);
         final List<AdminAfterCheckinResponse> shifts = shiftPage.getContent().stream()
                 .map(shift -> {
-                    String address = geocodingService.getAddress(shift.getCheckin().getLatitude(), shift.getCheckin().getLongitude());
+                    final String address = geocodingService.getAddress(shift.getCheckin().getLatitude(), shift.getCheckin().getLongitude());
                     return new AdminAfterCheckinResponse(shift, address);
                 })
                 .collect(Collectors.toList());

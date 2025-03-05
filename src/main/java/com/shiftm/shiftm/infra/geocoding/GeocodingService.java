@@ -26,7 +26,7 @@ public class GeocodingService {
         this.objectMapper = objectMapper;
     }
 
-    public String getAddress(double latitude, double longitude) {
+    public String getAddress(final double latitude, final double longitude) {
         final HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "KakaoAK " + kakaoApiKey);
         final HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -35,7 +35,7 @@ public class GeocodingService {
         try {
             final GeocodingResponse geocodingResponse = objectMapper.readValue(response, GeocodingResponse.class);
             if (geocodingResponse.documents() != null && !geocodingResponse.documents().isEmpty()) {
-                String address = geocodingResponse.documents().get(0).address().addressName();
+                final String address = geocodingResponse.documents().get(0).address().addressName();
                 return address;
             }
         } catch (Exception e) {
