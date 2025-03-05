@@ -147,6 +147,10 @@ public class MemberService {
         return member;
     }
 
+    public List<Member> findMemberByName(final String name) {
+
+    }
+
     private String createVerificationCode() {
         final Random random = new Random();
         final StringBuilder verificationCode = new StringBuilder();

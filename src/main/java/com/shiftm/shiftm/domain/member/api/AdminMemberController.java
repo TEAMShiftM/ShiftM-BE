@@ -38,8 +38,17 @@ public class AdminMemberController {
         final Member member = memberService.updateMemberForAdmin(memberId, requestDto);
         return new MemberResponse(member);
     }
+
     @DeleteMapping("/{memberId}")
     public void withdrawMember(@PathParam("memberId") final String memberId) {
         memberService.withdraw(memberId);
+    }
+
+    @GetMapping("/search")
+    public List<MemberResponse> findMemberByName(@RequestParam final String name) {
+        final List<Member> memberList = memberService.findMemberByName();
+        return memberList.stream()
+                .map(MemberResponse::new)
+                .collect(Collectors.toList());
     }
 }
