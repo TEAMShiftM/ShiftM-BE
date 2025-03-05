@@ -135,8 +135,16 @@ public class MemberService {
         return memberList;
     }
 
+    @Transactional
     public Member updateMemberForAdmin(final String memberId, final UpdateForAdminRequest requestDto) {
+        final Member member = memberDao.findById(memberId);
 
+        member.setName(requestDto.name());
+        member.setBirthDate(requestDto.birthDate());
+        member.setGender(Gender.valueOf(requestDto.gender().toUpperCase()));
+        member.setEntryDate(requestDto.entryDate());
+
+        return member;
     }
 
     private String createVerificationCode() {
