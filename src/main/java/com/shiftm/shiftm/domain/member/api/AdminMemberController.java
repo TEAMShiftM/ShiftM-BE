@@ -35,7 +35,7 @@ public class AdminMemberController {
     @PatchMapping("/{memberId}")
     public MemberResponse updateMember(@PathParam("memberId") final String memberId,
                                        @Valid @RequestBody final UpdateForAdminRequest requestDto) {
-        final Member member = memberService.updateProfileForAdmin(memberId, requestDto);
+        final Member member = memberService.updateMemberForAdmin(memberId, requestDto);
         return new MemberResponse(member);
     }
     @DeleteMapping("/{memberId}")
