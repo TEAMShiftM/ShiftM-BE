@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Random;
 
 @RequiredArgsConstructor
@@ -126,6 +127,12 @@ public class MemberService {
         final Member member = memberDao.findById(memberId);
 
         member.setStatus(Status.INACTIVE);
+    }
+
+    @Transactional
+    public List<Member> getAllEmployee() {
+        final List<Member> memberList = memberRepository.findAll();
+        return memberList;
     }
 
     private String createVerificationCode() {
