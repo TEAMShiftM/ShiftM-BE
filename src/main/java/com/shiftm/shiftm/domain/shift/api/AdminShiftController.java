@@ -59,8 +59,9 @@ public class AdminShiftController {
 
     // 출근 상태 변경
     @PatchMapping("/{shiftId}/status")
-    public AfterCheckinResponse updateAfterCheckinStatus(@PathVariable final Long shiftId, @Valid @RequestBody final ShiftStatusRequest requestDto) {
-        return new AfterCheckinResponse(shiftService.updateAfterCheckinStatus(shiftId, requestDto));
+    public AdminAfterCheckinResponse updateAfterCheckinStatus(@PathVariable final Long shiftId, @Valid @RequestBody final ShiftStatusRequest requestDto) {
+        final Shift shift = shiftService.updateAfterCheckinStatus(shiftId, requestDto);
+        return new AdminAfterCheckinResponse(shift, geocodingService.getAddress(shift.getCheckin().getLatitude(), shift.getCheckin().getLongitude()));
     }
 
     // 근무 기록 수정
