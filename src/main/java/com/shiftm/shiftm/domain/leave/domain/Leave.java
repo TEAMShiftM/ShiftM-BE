@@ -3,6 +3,7 @@ package com.shiftm.shiftm.domain.leave.domain;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +19,10 @@ public class Leave {
     private Long id;
 
     @Column(nullable = false)
-    private Integer count;
+    private Double count;
+
+    @Column(nullable = false)
+    private Double usedCount;
 
     @Column(nullable = false)
     private LocalDate expirationDate;
@@ -30,4 +34,25 @@ public class Leave {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private LeaveType leaveType;
+
+    @Builder
+    public Leave(final Double count, final LocalDate expirationDate) {
+        this.count = count;
+        this.usedCount = 0.0;
+        this.expirationDate = expirationDate;
+    }
+
+    public void updateMember(final Member member) {
+        this.member = member;
+    }
+
+    public void updateLeaveType(final LeaveType leaveType) {
+        this.leaveType = leaveType;
+    }
+
+    public void updateLeave(final Double count, final Double usedCount, final LocalDate expirationDate) {
+        this.count = count;
+        this.usedCount = usedCount;
+        this.expirationDate = expirationDate;
+    }
 }
