@@ -3,16 +3,24 @@ package com.shiftm.shiftm.domain.shift.service;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberDao;
 import com.shiftm.shiftm.domain.shift.domain.Shift;
-import com.shiftm.shiftm.domain.shift.dto.request.AfterCheckinRequest;
-import com.shiftm.shiftm.domain.shift.dto.request.CheckinRequest;
-import com.shiftm.shiftm.domain.shift.dto.request.CheckoutRequest;
+import com.shiftm.shiftm.domain.shift.domain.enums.Status;
+import com.shiftm.shiftm.domain.shift.dto.request.*;
 import com.shiftm.shiftm.domain.shift.exception.CheckinAlreadyExistsException;
 import com.shiftm.shiftm.domain.shift.exception.ShiftNotFoundException;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
+import com.shiftm.shiftm.infra.geocoding.GeocodingService;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -25,6 +33,7 @@ public class ShiftService {
     private static final LocalTime PIVOT_TIME = LocalTime.of(4, 0);
 
     private final ShiftRepository shiftRepository;
+    private final GeocodingService geocodingService;
     private final MemberDao memberDao;
 
     @Transactional
@@ -72,11 +81,46 @@ public class ShiftService {
         return shift;
     }
 
+    @Transactional(readOnly = true)
+    public Page<Shift> getShifts(final Pageable pageable, final String name) {
+        if (name == null || name.isEmpty()) {
+            return shiftRepository.findAll(pageable);
+        }
+        return shiftRepository.findByName(pageable, name);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Shift> getAfterCheckin(final Pageable pageable, final String name) {
+        if (name == null || name.isEmpty()) {
+            return shiftRepository.findByStatusExcludeOrdered(pageable, Status.AUTO_APPROVED);
+        }
+        return shiftRepository.findByStatusExcludeAndNameOrdered(pageable, Status.AUTO_APPROVED, name);
+    }
+
+    public Shift updateAfterCheckinStatus(final Long shiftId, final ShiftStatusRequest requestDto) {
+        final Shift shift = findById(shiftId);
+        shift.updateStatus(requestDto.status());
+        return shift;
+    }
+
+    @Transactional
+    public Shift updateShift(final Long shiftId, final ShiftRequest requestDto) {
+        final Shift shift = findById(shiftId);
+        shift.update(requestDto.checkinTime(), requestDto.latitude(),
+                requestDto.longitude(), requestDto.status(), requestDto.checkoutTime());
+        return shift;
+    }
+
     private void validateDuplicateCheckin(final Member member) {
         final LocalDateTime start = LocalDate.now().atStartOfDay();
         final LocalDateTime end = start.plusDays(1).minusNanos(1);
         if (shiftRepository.existsByMemberAndCheckinTimeInRange(member, start, end)) {
             throw new CheckinAlreadyExistsException();
         }
+    }
+
+    private Shift findById(final Long shiftId) {
+        return shiftRepository.findById(shiftId)
+                .orElseThrow(() -> new ShiftNotFoundException());
     }
 }
