@@ -46,7 +46,7 @@ public class AdminMemberController {
 
     @GetMapping("/search")
     public List<MemberResponse> findMemberByName(@RequestParam final String name) {
-        final List<Member> memberList = memberService.findMemberByName();
+        final List<Member> memberList = memberService.findMemberByName(name);
         return memberList.stream()
                 .map(MemberResponse::new)
                 .collect(Collectors.toList());

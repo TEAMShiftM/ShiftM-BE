@@ -148,7 +148,8 @@ public class MemberService {
     }
 
     public List<Member> findMemberByName(final String name) {
-
+        final List<Member> memberList = memberRepository.findByName(name);
+        return memberList;
     }
 
     private String createVerificationCode() {
