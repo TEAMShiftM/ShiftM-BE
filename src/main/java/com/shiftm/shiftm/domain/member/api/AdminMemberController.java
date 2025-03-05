@@ -5,6 +5,7 @@ import com.shiftm.shiftm.domain.member.dto.response.MemberResponse;
 import com.shiftm.shiftm.domain.member.service.MemberService;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,5 +31,10 @@ public class AdminMemberController {
     public MemberResponse getMember(@PathParam("memberId") final String memberId) {
         final Member member = memberService.getProfile(memberId);
         return new MemberResponse(member);
+    }
+
+    @DeleteMapping("/{memberId}")
+    public void withdrawMember(@PathParam("memberId") final String memberId) {
+        memberService.withdraw(memberId);
     }
 }
