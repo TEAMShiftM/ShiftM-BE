@@ -33,7 +33,9 @@ public class SecurityConfig {
             "/member/find/id",
             "/member/find/password",
             "/auth/login",
-            "/auth/reissue"
+            "/auth/reissue",
+            "/swagger-ui/**",
+            "/v3/api-docs/**"
     };
 
     @Bean
