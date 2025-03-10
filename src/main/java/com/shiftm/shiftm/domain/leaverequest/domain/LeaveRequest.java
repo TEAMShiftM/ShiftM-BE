@@ -3,6 +3,7 @@ package com.shiftm.shiftm.domain.leaverequest.domain;
 import com.shiftm.shiftm.domain.leave.domain.Leave;
 import com.shiftm.shiftm.domain.leaverequest.domain.enums.Status;
 import com.shiftm.shiftm.domain.member.domain.Member;
+import com.shiftm.shiftm.global.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "leave_requests")
 @Entity
-public class LeaveRequest {
+public class LeaveRequest extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

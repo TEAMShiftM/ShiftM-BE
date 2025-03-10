@@ -1,5 +1,6 @@
 package com.shiftm.shiftm.domain.leave.domain;
 
+import com.shiftm.shiftm.global.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "leave_types")
 @Entity
-public class LeaveType {
+public class LeaveType extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,5 +1,6 @@
 package com.shiftm.shiftm.domain.company.domain;
 
+import com.shiftm.shiftm.global.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,7 +13,7 @@ import java.time.LocalTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "companies")
 @Entity
-public class Company {
+public class Company extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

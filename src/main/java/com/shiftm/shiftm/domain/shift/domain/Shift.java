@@ -2,6 +2,7 @@ package com.shiftm.shiftm.domain.shift.domain;
 
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.shift.domain.enums.Status;
+import com.shiftm.shiftm.global.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @SQLDelete(sql = "update shifts set deleted = 1 where id = ?")
 @Table(name = "shifts")
 @Entity
-public class Shift {
+public class Shift extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
