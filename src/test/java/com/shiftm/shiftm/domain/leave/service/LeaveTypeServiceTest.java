@@ -3,7 +3,7 @@ package com.shiftm.shiftm.domain.leave.service;
 import com.shiftm.shiftm.domain.leave.domain.LeaveType;
 import com.shiftm.shiftm.domain.leave.dto.request.LeaveTypeRequest;
 import com.shiftm.shiftm.domain.leave.exception.DuplicatedNameException;
-import com.shiftm.shiftm.domain.leave.exception.NotFoundLeaveTypeException;
+import com.shiftm.shiftm.domain.leave.exception.LeaveTypeNotFoundException;
 import com.shiftm.shiftm.domain.leave.repository.LeaveTypeRepository;
 import com.shiftm.shiftm.test.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,7 +75,7 @@ class LeaveTypeServiceTest extends UnitTest {
         when(leaveTypeRepository.findById(any())).thenReturn(Optional.empty());
 
         // when, then
-        assertThrows(NotFoundLeaveTypeException.class, () -> leaveTypeService.updateLeaveType(10L, requestDto));
+        assertThrows(LeaveTypeNotFoundException.class, () -> leaveTypeService.updateLeaveType(10L, requestDto));
     }
 
     @DisplayName("연차 유형 수정 실패 - 연차 유형 이름 중복")
