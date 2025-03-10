@@ -3,6 +3,7 @@ package com.shiftm.shiftm.domain.member.domain;
 import com.shiftm.shiftm.domain.member.domain.enums.Gender;
 import com.shiftm.shiftm.domain.member.domain.enums.Role;
 import com.shiftm.shiftm.domain.member.domain.enums.Status;
+import com.shiftm.shiftm.global.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "members")
 @Entity
-public class Member {
+public class Member extends BaseEntity {
     @Id
     private String id;
 
