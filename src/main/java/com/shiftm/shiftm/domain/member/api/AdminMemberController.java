@@ -2,6 +2,7 @@ package com.shiftm.shiftm.domain.member.api;
 
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.dto.request.UpdateForAdminRequest;
+import com.shiftm.shiftm.domain.member.dto.response.ListMemberResponse;
 import com.shiftm.shiftm.domain.member.dto.response.MemberResponse;
 import com.shiftm.shiftm.domain.member.service.MemberService;
 import jakarta.validation.Valid;
@@ -18,11 +19,9 @@ public class AdminMemberController {
     private final MemberService memberService;
 
     @GetMapping
-    public List<MemberResponse> getAllEmployee() {
+    public ListMemberResponse getAllEmployee() {
         final List<Member> memberList = memberService.getAllEmployee();
-        return memberList.stream()
-                .map(MemberResponse::new)
-                .collect(Collectors.toList());
+        return ListMemberResponse.of(memberList);
     }
 
     @GetMapping("/{memberId}")
@@ -44,10 +43,8 @@ public class AdminMemberController {
     }
 
     @GetMapping("/search")
-    public List<MemberResponse> findMemberByName(@RequestParam final String name) {
+    public ListMemberResponse findMemberByName(@RequestParam final String name) {
         final List<Member> memberList = memberService.findMemberByName(name);
-        return memberList.stream()
-                .map(MemberResponse::new)
-                .collect(Collectors.toList());
+        return ListMemberResponse.of(memberList);
     }
 }
