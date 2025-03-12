@@ -9,7 +9,7 @@ import com.shiftm.shiftm.domain.member.exception.DuplicatedEmailException;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedIdException;
 import com.shiftm.shiftm.domain.member.exception.MemberNotFoundException;
 import com.shiftm.shiftm.domain.member.exception.PasswordNotMatchException;
-import com.shiftm.shiftm.domain.member.repository.MemberDao;
+import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.domain.member.repository.MemberRepository;
 import com.shiftm.shiftm.infra.email.MailSender;
 import com.shiftm.shiftm.infra.redis.RedisService;
@@ -26,7 +26,7 @@ import java.util.Random;
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final MemberDao memberDao;
+    private final MemberFindDao memberFindDao;
     private final RedisService redisService;
     private final MailSender mailSender;
     private final PasswordEncoder passwordEncoder;
@@ -73,7 +73,7 @@ public class MemberService {
 
     @Transactional
     public void findId(final FindIdRequest requestDto) {
-        final Member member = memberDao.findByEmail(requestDto.email());
+        final Member member = memberFindDao.findByEmail(requestDto.email());
 
         final String mailMessage = createMailMessage("ShiftM 아이디 찾기", "회원님의 아이디는 다음과 같습니다.", member.getId());
         mailSender.sendMail(requestDto.email(), "[ShiftM] 아이디 찾기", mailMessage);
@@ -81,7 +81,7 @@ public class MemberService {
 
     @Transactional
     public void findPassword(final FindPasswordRequest requestDto) {
-        final Member member = memberDao.findByEmail(requestDto.email());
+        final Member member = memberFindDao.findByEmail(requestDto.email());
 
         if (!member.getId().equals(requestDto.id())) {
             throw new MemberNotFoundException(requestDto.id());
@@ -96,12 +96,12 @@ public class MemberService {
 
     @Transactional
     public Member getProfile(final String memberId) {
-        return memberDao.findById(memberId);
+        return memberFindDao.findById(memberId);
     }
 
     @Transactional
     public Member updateProfile(final String memberId, final UpdateRequest requestDto) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
 
         member.setEmail(requestDto.email());
         member.setName(requestDto.name());
@@ -113,7 +113,7 @@ public class MemberService {
 
     @Transactional
     public void updatePassword(final String memberId, final UpdatePasswordRequest requestDto) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
 
         if (!passwordEncoder.matches(requestDto.currentPassword(), member.getPassword())) {
             throw new PasswordNotMatchException();
@@ -124,20 +124,20 @@ public class MemberService {
 
     @Transactional
     public void withdraw(final String memberId) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
 
         member.setStatus(Status.INACTIVE);
     }
 
     @Transactional
     public List<Member> getAllEmployee() {
-        final List<Member> memberList = memberDao.findAll();
+        final List<Member> memberList = memberFindDao.findAll();
         return memberList;
     }
 
     @Transactional
     public Member updateMemberForAdmin(final String memberId, final UpdateForAdminRequest requestDto) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
 
         member.setName(requestDto.name());
         member.setBirthDate(requestDto.birthDate());
@@ -148,7 +148,7 @@ public class MemberService {
     }
 
     public List<Member> findMemberByName(final String name) {
-        final List<Member> memberList = memberDao.findAllByName(name);
+        final List<Member> memberList = memberFindDao.findAllByName(name);
         return memberList;
     }
 

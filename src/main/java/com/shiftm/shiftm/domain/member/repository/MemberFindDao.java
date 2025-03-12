@@ -9,7 +9,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class MemberDao {
+public class MemberFindDao {
     private final MemberRepository memberRepository;
 
     public Member findById(final String id) {

@@ -1,7 +1,7 @@
 package com.shiftm.shiftm.domain.shift.service;
 
 import com.shiftm.shiftm.domain.member.domain.Member;
-import com.shiftm.shiftm.domain.member.repository.MemberDao;
+import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.domain.shift.domain.Shift;
 import com.shiftm.shiftm.domain.shift.domain.enums.Status;
 import com.shiftm.shiftm.domain.shift.dto.request.*;
@@ -10,17 +10,11 @@ import com.shiftm.shiftm.domain.shift.exception.ShiftNotFoundException;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
 import com.shiftm.shiftm.infra.geocoding.GeocodingService;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -34,11 +28,11 @@ public class ShiftService {
 
     private final ShiftRepository shiftRepository;
     private final GeocodingService geocodingService;
-    private final MemberDao memberDao;
+    private final MemberFindDao memberFindDao;
 
     @Transactional
     public Shift createCheckin(final String memberId, final CheckinRequest requestDto) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
         validateDuplicateCheckin(member);
         final Shift shift = requestDto.toEntity(member);
         return shiftRepository.save(shift);
@@ -46,7 +40,7 @@ public class ShiftService {
 
     @Transactional
     public Shift createAfterCheckin(final String memberId, final AfterCheckinRequest requestDto) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
         validateDuplicateCheckin(member);
         final Shift shift = requestDto.toEntity(member);
         return shiftRepository.save(shift);
@@ -61,7 +55,7 @@ public class ShiftService {
 
     @Transactional(readOnly = true)
     public List<Shift> getShiftsInRange(final String memberId, final LocalDate startDate, final LocalDate endDate) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
         final LocalDateTime start = (startDate != null) ? startDate.atStartOfDay() : null;
         final LocalDateTime end = (endDate != null) ? endDate.plusDays(1).atStartOfDay().minusNanos(1) : null;
         return shiftRepository.findShiftsByMemberAndCheckinTimeInRange(member, start, end);
@@ -69,7 +63,7 @@ public class ShiftService {
 
     @Transactional(readOnly = true)
     public Shift getShiftForCurrentDay(final String memberId) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
         final LocalDate today = LocalDate.now();
         final LocalDateTime startOfDay = today.atStartOfDay();
         final LocalDateTime pivot = today.atTime(PIVOT_TIME);
