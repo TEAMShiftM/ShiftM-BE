@@ -5,6 +5,8 @@ import com.shiftm.shiftm.domain.member.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class MemberDao {
@@ -18,5 +20,13 @@ public class MemberDao {
     public Member findByEmail(final String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberNotFoundException(email));
+    }
+
+    public List<Member> findAll() {
+        return memberRepository.findAll();
+    }
+
+    public List<Member> findAllByName(final String name) {
+        return memberRepository.findAllByName(name);
     }
 }

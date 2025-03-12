@@ -131,7 +131,7 @@ public class MemberService {
 
     @Transactional
     public List<Member> getAllEmployee() {
-        final List<Member> memberList = memberRepository.findAll();
+        final List<Member> memberList = memberDao.findAll();
         return memberList;
     }
 
@@ -148,7 +148,7 @@ public class MemberService {
     }
 
     public List<Member> findMemberByName(final String name) {
-        final List<Member> memberList = memberRepository.findByName(name);
+        final List<Member> memberList = memberDao.findAllByName(name);
         return memberList;
     }
 
