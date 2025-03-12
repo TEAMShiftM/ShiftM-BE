@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @Table(name = "members")
 @Entity
 public class Member extends BaseEntity {
+
     @Id
     private String id;
 

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/admin/member")
 @RestController
 public class AdminMemberController {
+
     private final MemberService memberService;
 
     @GetMapping

@@ -25,6 +25,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 @Service
 public class MemberService {
+
     private final MemberRepository memberRepository;
     private final MemberFindDao memberFindDao;
     private final RedisService redisService;
