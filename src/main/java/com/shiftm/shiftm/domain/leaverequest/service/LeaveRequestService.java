@@ -12,7 +12,7 @@ import com.shiftm.shiftm.domain.leaverequest.exception.LeaveRequestNotFoundExcep
 import com.shiftm.shiftm.domain.leaverequest.exception.LeaveRequestUpdateFailedException;
 import com.shiftm.shiftm.domain.leaverequest.repository.LeaveRequestRepository;
 import com.shiftm.shiftm.domain.member.domain.Member;
-import com.shiftm.shiftm.domain.member.repository.MemberDao;
+import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,13 +28,13 @@ import java.util.List;
 @Service
 public class LeaveRequestService {
 
-    private final MemberDao memberDao;
+    private final MemberFindDao memberFindDao;
     private final LeaveRepository leaveRepository;
     private final LeaveRequestRepository leaveRequestRepository;
 
     @Transactional
     public void requestLeave(final String memberId, final RequestLeaveRequest requestDto) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
 
         final List<Leave> leaves = leaveRepository.findLeaves(memberId, requestDto.leaveTypeId(), LocalDate.now());
 
@@ -79,14 +79,14 @@ public class LeaveRequestService {
 
     @Transactional(readOnly = true)
     public Page<LeaveRequest> getRequestLeaveInfos(final String memberId, final Pageable pageable) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
 
         return leaveRequestRepository.findByMember(member, pageable);
     }
 
     @Transactional
     public void updateLeaveRequest(final String memberId, final Long leaveRequestId, final UpdateLeaveRequestRequest request) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
 
         final LeaveRequest leaveRequest = findById(leaveRequestId);
 
@@ -108,7 +108,7 @@ public class LeaveRequestService {
 
     @Transactional(readOnly = true)
     public Page<LeaveRequest> getLeaveRequest(final String memberId, final Pageable pageable) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
 
         return leaveRequestRepository.findByMember(member, pageable);
     }

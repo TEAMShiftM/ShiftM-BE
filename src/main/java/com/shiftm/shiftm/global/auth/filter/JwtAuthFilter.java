@@ -1,7 +1,7 @@
 package com.shiftm.shiftm.global.auth.filter;
 
 import com.shiftm.shiftm.domain.member.domain.Member;
-import com.shiftm.shiftm.domain.member.repository.MemberDao;
+import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.global.auth.jwt.JwtValidator;
 import com.shiftm.shiftm.infra.redis.RedisService;
 import jakarta.servlet.FilterChain;
@@ -21,7 +21,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
-    private final MemberDao memberDao;
+    private final MemberFindDao memberFindDao;
     private final JwtValidator jwtValidator;
     private final RedisService redisService;
 
@@ -46,7 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private void authenticate(final String accessToken) {
         final String memberId = jwtValidator.getSubject(accessToken);
         final String storedRefreshToken = redisService.getValue("REFRESH_TOKEN:" + memberId);
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             final UsernamePasswordAuthenticationToken userAuth = new UsernamePasswordAuthenticationToken(

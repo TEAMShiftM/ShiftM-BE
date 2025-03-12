@@ -1,7 +1,7 @@
 package com.shiftm.shiftm.domain.shift.service;
 
 import com.shiftm.shiftm.domain.member.domain.Member;
-import com.shiftm.shiftm.domain.member.repository.MemberDao;
+import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.domain.shift.domain.Checkin;
 import com.shiftm.shiftm.domain.shift.domain.Checkout;
 import com.shiftm.shiftm.domain.shift.domain.Shift;
@@ -36,7 +36,7 @@ class ShiftServiceTest extends UnitTest {
     private ShiftRepository shiftRepository;
 
     @Mock
-    private MemberDao memberDao;
+    private MemberFindDao memberFindDao;
 
     private LocalDateTime now;
     private Member member;
@@ -70,7 +70,7 @@ class ShiftServiceTest extends UnitTest {
         // given
         final CheckinRequest requestDto = new CheckinRequest(now);
 
-        when(memberDao.findById(any())).thenReturn(member);
+        when(memberFindDao.findById(any())).thenReturn(member);
         when(shiftRepository.existsByMemberAndCheckinTimeInRange(any(), any(), any())).thenReturn(false);
         when(shiftRepository.save(any())).thenReturn(shift);
 
@@ -102,7 +102,7 @@ class ShiftServiceTest extends UnitTest {
         // given
         final AfterCheckinRequest requestDto = new AfterCheckinRequest(now, 0.0, 0.0);
 
-        when(memberDao.findById(any())).thenReturn(member);
+        when(memberFindDao.findById(any())).thenReturn(member);
         when(shiftRepository.existsByMemberAndCheckinTimeInRange(any(), any(), any())).thenReturn(false);
         when(shiftRepository.save(any())).thenReturn(shift);
 
@@ -136,7 +136,7 @@ class ShiftServiceTest extends UnitTest {
         // given
         final CheckoutRequest requestDto = new CheckoutRequest(now);
 
-        when(memberDao.findById(any())).thenReturn(member);
+        when(memberFindDao.findById(any())).thenReturn(member);
         when(shiftRepository.findShiftByMemberAndCheckinTimeInRange(any(), any(), any())).thenReturn(Optional.of(shift));
 
         // when
@@ -164,7 +164,7 @@ class ShiftServiceTest extends UnitTest {
         // given
         final List<Shift> shifts = List.of(shift, shift);
 
-        when(memberDao.findById(any())).thenReturn(member);
+        when(memberFindDao.findById(any())).thenReturn(member);
         when(shiftRepository.findShiftsByMemberAndCheckinTimeInRange(any(), any(), any())).thenReturn(shifts);
 
         // when
@@ -180,7 +180,7 @@ class ShiftServiceTest extends UnitTest {
         // given
         final List<Shift> shifts = List.of(shift, shift);
 
-        when(memberDao.findById(any())).thenReturn(member);
+        when(memberFindDao.findById(any())).thenReturn(member);
         when(shiftRepository.findShiftsByMemberAndCheckinTimeInRange(any(), eq(null), any())).thenReturn(shifts);
 
         // when
@@ -196,7 +196,7 @@ class ShiftServiceTest extends UnitTest {
         // given
         final List<Shift> shifts = List.of(shift, shift);
 
-        when(memberDao.findById(any())).thenReturn(member);
+        when(memberFindDao.findById(any())).thenReturn(member);
         when(shiftRepository.findShiftsByMemberAndCheckinTimeInRange(any(), any(), eq(null))).thenReturn(shifts);
 
         // when
@@ -212,7 +212,7 @@ class ShiftServiceTest extends UnitTest {
         // given
         final List<Shift> shifts = List.of(shift, shift);
 
-        when(memberDao.findById(any())).thenReturn(member);
+        when(memberFindDao.findById(any())).thenReturn(member);
         when(shiftRepository.findShiftsByMemberAndCheckinTimeInRange(any(), eq(null), eq(null))).thenReturn(shifts);
 
         // when

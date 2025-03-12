@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/member")
 @RestController
 public class MemberController {
+    
     private final MemberService memberService;
 
     @PostMapping("/signup")

@@ -5,7 +5,7 @@ import com.shiftm.shiftm.domain.auth.dto.response.TokenResponse;
 import com.shiftm.shiftm.domain.auth.exception.InvalidPasswordException;
 import com.shiftm.shiftm.domain.auth.exception.InvalidTokenException;
 import com.shiftm.shiftm.domain.member.domain.Member;
-import com.shiftm.shiftm.domain.member.repository.MemberDao;
+import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.global.auth.jwt.JwtGenerator;
 import com.shiftm.shiftm.global.auth.jwt.JwtValidator;
 import com.shiftm.shiftm.infra.redis.RedisService;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class AuthService {
-    private final MemberDao memberDao;
+    private final MemberFindDao memberFindDao;
     private final PasswordEncoder passwordEncoder;
     private final JwtGenerator jwtGenerator;
     private final JwtValidator jwtValidator;
@@ -56,7 +56,7 @@ public class AuthService {
     }
 
     private void authenticateMember(final String id, final String password) {
-        final Member member = memberDao.findById(id);
+        final Member member = memberFindDao.findById(id);
 
         if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new InvalidPasswordException();
@@ -64,7 +64,7 @@ public class AuthService {
     }
 
     private TokenResponse generateToken(final String id) {
-        final Member member = memberDao.findById(id);
+        final Member member = memberFindDao.findById(id);
 
         final String accessToken = jwtGenerator.generateAccessToken(member.getId(), member.getRole().name());
         final String refreshToken = jwtGenerator.generateRefreshToken(member.getId());

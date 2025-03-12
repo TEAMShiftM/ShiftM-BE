@@ -4,7 +4,7 @@ import com.shiftm.shiftm.domain.auth.dto.response.TokenResponse;
 import com.shiftm.shiftm.domain.auth.exception.InvalidTokenException;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.domain.MemberBuilder;
-import com.shiftm.shiftm.domain.member.repository.MemberDao;
+import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.global.auth.jwt.JwtGenerator;
 import com.shiftm.shiftm.global.auth.jwt.JwtValidator;
 import com.shiftm.shiftm.global.error.exception.EntityNotFoundException;
@@ -13,7 +13,6 @@ import com.shiftm.shiftm.test.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -26,7 +25,7 @@ public class ReissueTest extends UnitTest {
     private AuthService authService;
 
     @Mock
-    private MemberDao memberDao;
+    private MemberFindDao memberFindDao;
 
     @Mock
     private JwtGenerator jwtGenerator;
@@ -48,7 +47,7 @@ public class ReissueTest extends UnitTest {
 
         when(jwtValidator.getSubject(any())).thenReturn("shiftm");
         when(redisService.getValue(any())).thenReturn("refresh_token");
-        when(memberDao.findById(any())).thenReturn(member);
+        when(memberFindDao.findById(any())).thenReturn(member);
         when(jwtGenerator.generateAccessToken(any(), any())).thenReturn("access_token");
         when(jwtGenerator.generateRefreshToken(any())).thenReturn("refresh_token");
 

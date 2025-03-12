@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, String> {
+
     boolean existsByEmail(final String email);
 
     Optional<Member> findByEmail(final String email);
 
-    List<Member> findByName(final String name);
+    List<Member> findAllByName(final String name);
   
     List<Member> findByIdIn(final List<String> ids);
 }

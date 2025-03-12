@@ -6,7 +6,7 @@ import com.shiftm.shiftm.domain.member.dto.SignUpRequestBuilder;
 import com.shiftm.shiftm.domain.member.dto.request.SignUpRequest;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedEmailException;
 import com.shiftm.shiftm.domain.member.exception.DuplicatedIdException;
-import com.shiftm.shiftm.domain.member.repository.MemberDao;
+import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.domain.member.repository.MemberRepository;
 import com.shiftm.shiftm.test.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +29,7 @@ public class MemberServiceTest extends UnitTest {
     private MemberRepository memberRepository;
 
     @Mock
-    private MemberDao memberDao;
+    private MemberFindDao memberFindDao;
 
     @Spy
     private PasswordEncoder passwordEncoder;
@@ -87,7 +87,7 @@ public class MemberServiceTest extends UnitTest {
     @Test
     public void 프로필_조회_성공() {
         // given
-        when(memberDao.findById(any())).thenReturn(member);
+        when(memberFindDao.findById(any())).thenReturn(member);
 
         // when
         final Member profileMember = memberService.getProfile(member.getId());

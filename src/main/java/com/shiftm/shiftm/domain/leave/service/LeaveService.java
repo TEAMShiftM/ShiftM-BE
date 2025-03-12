@@ -10,7 +10,7 @@ import com.shiftm.shiftm.domain.leave.repository.LeaveRepository;
 import com.shiftm.shiftm.domain.leave.repository.LeaveTypeDao;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.exception.MemberNotFoundException;
-import com.shiftm.shiftm.domain.member.repository.MemberDao;
+import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,7 +26,7 @@ import java.util.List;
 public class LeaveService {
 
     private final MemberRepository memberRepository;
-    private final MemberDao memberDao;
+    private final MemberFindDao memberFindDao;
     private final LeaveTypeDao leaveTypeDao;
     private final LeaveDao leaveDao;
     private final LeaveRepository leaveRepository;
@@ -76,7 +76,7 @@ public class LeaveService {
 
     @Transactional(readOnly = true)
     public Page<Leave> getLeaveInfo(final String memberId, final Pageable pageable) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
 
         return leaveRepository.findByMember(member, pageable);
     }
@@ -88,7 +88,7 @@ public class LeaveService {
 
     @Transactional(readOnly = true)
     public Page<Leave> getLeave(final Pageable pageable, final String memberId) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
 
         return leaveRepository.findByMember(member, pageable);
     }
@@ -102,7 +102,7 @@ public class LeaveService {
     }
 
     private Leave createLeave(final String memberId, final Leave leave) {
-        final Member member = memberDao.findById(memberId);
+        final Member member = memberFindDao.findById(memberId);
 
         leave.updateMember(member);
 

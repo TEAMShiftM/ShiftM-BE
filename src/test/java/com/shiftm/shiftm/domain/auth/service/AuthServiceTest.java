@@ -7,7 +7,7 @@ import com.shiftm.shiftm.domain.auth.exception.InvalidPasswordException;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.domain.MemberBuilder;
 import com.shiftm.shiftm.domain.member.exception.MemberNotFoundException;
-import com.shiftm.shiftm.domain.member.repository.MemberDao;
+import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.global.auth.jwt.JwtGenerator;
 import com.shiftm.shiftm.infra.redis.RedisService;
 import com.shiftm.shiftm.test.UnitTest;
@@ -26,7 +26,7 @@ public class AuthServiceTest extends UnitTest {
     private AuthService authService;
 
     @Mock
-    private MemberDao memberDao;
+    private MemberFindDao memberFindDao;
 
     @Mock
     private JwtGenerator jwtGenerator;
@@ -43,7 +43,7 @@ public class AuthServiceTest extends UnitTest {
         final LoginRequest requestDto = LoginRequestBuilder.build();
         final Member member = MemberBuilder.build();
 
-        when(memberDao.findById(any())).thenReturn(member);
+        when(memberFindDao.findById(any())).thenReturn(member);
         when(passwordEncoder.matches(any(), any())).thenReturn(true);
         when(jwtGenerator.generateAccessToken(any(), any())).thenReturn("access_token");
         when(jwtGenerator.generateRefreshToken(any())).thenReturn("refresh_token");
@@ -62,7 +62,7 @@ public class AuthServiceTest extends UnitTest {
         // given
         final LoginRequest requestDto = LoginRequestBuilder.build();
 
-        when(memberDao.findById(any())).thenThrow(MemberNotFoundException.class);
+        when(memberFindDao.findById(any())).thenThrow(MemberNotFoundException.class);
 
         // when, then
         assertThrows(MemberNotFoundException.class, () -> authService.login(requestDto));
@@ -74,7 +74,7 @@ public class AuthServiceTest extends UnitTest {
         final LoginRequest requestDto = LoginRequestBuilder.build();
         final Member member = MemberBuilder.build();
 
-        when(memberDao.findById(any())).thenReturn(member);
+        when(memberFindDao.findById(any())).thenReturn(member);
         when(passwordEncoder.matches(any(), any())).thenReturn(false);
 
         // when, then
