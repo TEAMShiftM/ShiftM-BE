@@ -7,7 +7,7 @@ import com.shiftm.shiftm.domain.leave.dto.request.UpdateLeaveRequest;
 import com.shiftm.shiftm.domain.leave.dto.response.LeaveCountResponse;
 import com.shiftm.shiftm.domain.leave.repository.LeaveDao;
 import com.shiftm.shiftm.domain.leave.repository.LeaveRepository;
-import com.shiftm.shiftm.domain.leave.repository.LeaveTypeDao;
+import com.shiftm.shiftm.domain.leave.repository.LeaveTypeFindDao;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.exception.MemberNotFoundException;
 import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
@@ -27,7 +27,7 @@ public class LeaveService {
 
     private final MemberRepository memberRepository;
     private final MemberFindDao memberFindDao;
-    private final LeaveTypeDao leaveTypeDao;
+    private final LeaveTypeFindDao leaveTypeFindDao;
     private final LeaveDao leaveDao;
     private final LeaveRepository leaveRepository;
 
@@ -37,7 +37,7 @@ public class LeaveService {
 
         validateMembers(requestDto.memberIds(), members);
 
-        final LeaveType leaveType = leaveTypeDao.findById(requestDto.leaveTypeId());
+        final LeaveType leaveType = leaveTypeFindDao.findById(requestDto.leaveTypeId());
 
         final List<Leave> leaves = requestDto.memberIds().stream()
                 .map(memberId -> createLeave(memberId, toEntity(requestDto, leaveType)))
@@ -51,7 +51,7 @@ public class LeaveService {
         final Leave leave = leaveDao.findById(leaveId);
 
         if (leave.getLeaveType().getId() != requestDto.leaveTypeId()) {
-            final LeaveType leaveType = leaveTypeDao.findById(requestDto.leaveTypeId());
+            final LeaveType leaveType = leaveTypeFindDao.findById(requestDto.leaveTypeId());
 
             leave.updateLeaveType(leaveType);
         }
