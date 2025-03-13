@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -39,6 +40,13 @@ public class LeaveTypeService {
     @Transactional(readOnly = true)
     public List<LeaveType> getAllLeaveType() {
         return leaveTypeFindDao.findByDeletedAtIsNull();
+    }
+
+    @Transactional
+    public void deleteLeaveType(final Long leaveTypeId) {
+        final LeaveType leaveType = leaveTypeFindDao.findById(leaveTypeId);
+
+        leaveType.setDeletedAt(LocalDateTime.now());
     }
 
     private void validateName(final String name) {
