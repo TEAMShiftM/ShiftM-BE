@@ -14,7 +14,7 @@ import com.shiftm.shiftm.domain.shift.dto.request.CheckoutRequest;
 import com.shiftm.shiftm.domain.shift.exception.CheckinAlreadyExistsException;
 import com.shiftm.shiftm.domain.shift.exception.ShiftNotFoundException;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
-import com.shiftm.shiftm.infra.location.KakaoGeocodingClient;
+import com.shiftm.shiftm.infra.geocoding.KakaoGeocodingClient;
 import com.shiftm.shiftm.test.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +23,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

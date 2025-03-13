@@ -1,8 +1,9 @@
-package com.shiftm.shiftm.infra.location;
+package com.shiftm.shiftm.infra.geocoding;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import com.shiftm.shiftm.infra.geocoding.exception.AdressNotFoundException;
+import com.shiftm.shiftm.infra.geocoding.exception.GeocodingException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -13,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-@Slf4j
 @Component
 public class KakaoGeocodingClient {
 
@@ -42,10 +42,9 @@ public class KakaoGeocodingClient {
                 return geocodingResponse.documents().get(0).address().addressName();
             }
         } catch (Exception e) {
-            log.error("주소 변환 실패: ", e);
-            return "주소 변환 실패";
+            throw new GeocodingException();
         }
-        return "주소를 찾을 수 없습니다";
+        throw new AdressNotFoundException();
     }
 
     public record KakaoGeocodingResponse(List<Document> documents) {

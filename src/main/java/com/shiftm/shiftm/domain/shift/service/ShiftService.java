@@ -2,7 +2,6 @@ package com.shiftm.shiftm.domain.shift.service;
 
 import com.shiftm.shiftm.domain.company.domain.Company;
 import com.shiftm.shiftm.domain.company.repository.CompanyFindDao;
-import com.shiftm.shiftm.domain.company.repository.CompanyRepository;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.domain.shift.domain.Shift;
@@ -12,7 +11,7 @@ import com.shiftm.shiftm.domain.shift.exception.CheckinAlreadyExistsException;
 import com.shiftm.shiftm.domain.shift.exception.ShiftNotFoundException;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
 import com.shiftm.shiftm.global.util.DistanceUtil;
-import com.shiftm.shiftm.infra.location.KakaoGeocodingClient;
+import com.shiftm.shiftm.infra.geocoding.KakaoGeocodingClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

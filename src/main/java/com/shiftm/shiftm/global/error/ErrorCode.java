@@ -41,8 +41,11 @@ public enum ErrorCode {
     SHIFT_NOT_FOUND(404, "SHIFT002", "Shift Not Found"),
   
     /* EMAIL ERROR */
-    UNABLE_TO_SEND_EMAIL(500, "EMAIL001", "Unable To Send Email");
+    UNABLE_TO_SEND_EMAIL(500, "EMAIL001", "Unable To Send Email"),
 
+    /* GEOCODING ERROR */
+    GEOCODING_FAILED(500, "GEO001", "Failed To Convert Coordinates To An Address"),
+    ADDRESS_NOT_FOUND(404, "GEO002", "No Address Found For The Given Coordinates");
 
     private final int status;
     private final String code;
