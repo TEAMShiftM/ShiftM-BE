@@ -1,19 +1,20 @@
 package com.shiftm.shiftm.domain.shift.service;
 
+import com.shiftm.shiftm.domain.company.domain.Company;
+import com.shiftm.shiftm.domain.company.repository.CompanyFindDao;
+import com.shiftm.shiftm.domain.company.repository.CompanyRepository;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.domain.shift.domain.Checkin;
 import com.shiftm.shiftm.domain.shift.domain.Checkout;
 import com.shiftm.shiftm.domain.shift.domain.Shift;
 import com.shiftm.shiftm.domain.shift.domain.enums.Status;
-import com.shiftm.shiftm.domain.shift.dto.request.AfterCheckinRequest;
 import com.shiftm.shiftm.domain.shift.dto.request.CheckinRequest;
 import com.shiftm.shiftm.domain.shift.dto.request.CheckoutRequest;
 import com.shiftm.shiftm.domain.shift.exception.CheckinAlreadyExistsException;
 import com.shiftm.shiftm.domain.shift.exception.ShiftNotFoundException;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
 import com.shiftm.shiftm.infra.location.KakaoGeocodingClient;
-import com.shiftm.shiftm.infra.location.ProximityCalculator;
 import com.shiftm.shiftm.test.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,10 +40,13 @@ class ShiftServiceTest extends UnitTest {
     private KakaoGeocodingClient kakaoGeocodingClient;
 
     @Mock
-    private ProximityCalculator proximityCalculator;
+    private ShiftRepository shiftRepository;
 
     @Mock
-    private ShiftRepository shiftRepository;
+    private CompanyRepository companyRepository;
+
+    @Mock
+    private CompanyFindDao companyFindDao;
 
     @Mock
     private MemberFindDao memberFindDao;
@@ -53,6 +58,7 @@ class ShiftServiceTest extends UnitTest {
     private Checkin checkin;
     private Checkin afterCheckin;
     private Checkout checkout;
+    private Company company;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -85,6 +91,10 @@ class ShiftServiceTest extends UnitTest {
                 .checkin(afterCheckin)
                 .checkout(checkout)
                 .build();
+        company = Company.builder()
+                .longitude(0.0)
+                .latitude(0.0)
+                .build();
     }
 
     @DisplayName("출근 신청 성공")
@@ -95,7 +105,7 @@ class ShiftServiceTest extends UnitTest {
 
         when(memberFindDao.findById(any())).thenReturn(member);
         when(shiftRepository.existsByMemberAndCheckinTimeInRange(any(), any(), any())).thenReturn(false);
-        when(proximityCalculator.isWithinDistance(any(), any(), any(), any(), any())).thenReturn(true);
+        when(companyFindDao.findFirst()).thenReturn(company);
         when(shiftRepository.save(any())).thenReturn(shift);
 
         // when
@@ -130,7 +140,7 @@ class ShiftServiceTest extends UnitTest {
 
         when(memberFindDao.findById(any())).thenReturn(member);
         when(shiftRepository.existsByMemberAndCheckinTimeInRange(any(), any(), any())).thenReturn(false);
-        when(proximityCalculator.isWithinDistance(any(), any(), any(), any(), any())).thenReturn(false);
+        when(companyFindDao.findFirst()).thenReturn(company);
         when(kakaoGeocodingClient.getAddress(anyDouble(), anyDouble())).thenReturn("서울");
         when(shiftRepository.save(any())).thenReturn(afterShift);
 
