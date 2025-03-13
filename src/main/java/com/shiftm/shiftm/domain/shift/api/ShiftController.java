@@ -28,12 +28,6 @@ public class ShiftController {
         return new CheckinResponse(shift);
     }
 
-    @PostMapping("/after-checkin")
-    public AfterCheckinResponse createAfterCheckin(@AuthId final String memberId, @Valid @RequestBody final AfterCheckinRequest requestDto) {
-        final Shift shift = shiftService.createAfterCheckin(memberId, requestDto);
-        return new AfterCheckinResponse(shift);
-    }
-
     @PatchMapping("/check-out")
     public CheckoutResponse createCheckout(@AuthId final String memberId, @Valid @RequestBody final CheckoutRequest requestDto) {
         final Shift shift = shiftService.createCheckout(memberId, requestDto);

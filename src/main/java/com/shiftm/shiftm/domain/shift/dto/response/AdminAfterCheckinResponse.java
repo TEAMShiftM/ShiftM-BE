@@ -12,7 +12,7 @@ public record AdminAfterCheckinResponse(
         LocalDateTime checkinTime,
         Status status
 ) {
-    public AdminAfterCheckinResponse(final Shift shift, final String address) {
-        this(shift.getId(), shift.getMember().getName(), address, shift.getCheckin().getCheckinTime(), shift.getCheckin().getStatus());
+    public AdminAfterCheckinResponse(final Shift shift) {
+        this(shift.getId(), shift.getMember().getName(), shift.getCheckin().getAddress(), shift.getCheckin().getCheckinTime(), shift.getCheckin().getStatus());
     }
 }
