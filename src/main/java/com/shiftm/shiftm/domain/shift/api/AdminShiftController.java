@@ -29,24 +29,18 @@ public class AdminShiftController {
 
     // 전체 근무 기록 조회
     @GetMapping
-    public AdminShiftListResponse getShifts(@PageableDefault final Pageable pageable,
+    public ListAdminShiftResponse getShifts(@PageableDefault final Pageable pageable,
                                             @RequestParam(required = false) final String name) {
         final Page<Shift> shiftPage = shiftService.getShifts(pageable, name);
-        final List<AdminShiftResponse> shifts = shiftPage.getContent().stream()
-                .map(shift -> new AdminShiftResponse(shift))
-                .collect(Collectors.toList());
-        return new AdminShiftListResponse(shifts, shiftPage.getNumber(), shiftPage.getSize(), shiftPage.getTotalPages(), shiftPage.getTotalElements());
+        return ListAdminShiftResponse.of(shiftPage.getContent(), shiftPage.getNumber(), shiftPage.getSize(), shiftPage.getTotalPages(), shiftPage.getTotalElements());
     }
 
     // 사후 출근 신청 조회
     @GetMapping("/after-checkin")
-    public AfterCheckinListResponse getAfterCheckin(@PageableDefault final Pageable pageable,
+    public ListAfterCheckinResponse getAfterCheckin(@PageableDefault final Pageable pageable,
                                                     @RequestParam(required = false) final String name) {
         final Page<Shift> shiftPage = shiftService.getAfterCheckin(pageable, name);
-        final List<AdminAfterCheckinResponse> shifts = shiftPage.getContent().stream()
-                .map(shift -> new AdminAfterCheckinResponse(shift))
-                .collect(Collectors.toList());
-        return new AfterCheckinListResponse(shifts, shiftPage.getNumber(), shiftPage.getSize(), shiftPage.getTotalPages(), shiftPage.getTotalElements());
+        return ListAfterCheckinResponse.of(shiftPage.getContent(), shiftPage.getNumber(), shiftPage.getSize(), shiftPage.getTotalPages(), shiftPage.getTotalElements());
     }
 
     // 출근 상태 변경
