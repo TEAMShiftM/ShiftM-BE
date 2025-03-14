@@ -27,4 +27,9 @@ public class AdminLeaveTypeController {
         final LeaveType leaveType = leaveTypeService.updateLeaveType(leaveTypeId, requestDto);
         return new LeaveTypeResponse(leaveType);
     }
+
+    @DeleteMapping("/{leaveTypeId}")
+    public void deleteLeaveType(@PathVariable(name = "leaveTypeId") final Long leaveTypeId) {
+        leaveTypeService.deleteLeaveType(leaveTypeId);
+    }
 }
