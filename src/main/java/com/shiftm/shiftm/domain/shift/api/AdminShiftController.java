@@ -7,7 +7,6 @@ import com.shiftm.shiftm.domain.shift.dto.response.*;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
 import com.shiftm.shiftm.domain.shift.service.ShiftService;
 import com.shiftm.shiftm.infra.file.ExcelFileService;
-import com.shiftm.shiftm.infra.geocoding.GeocodingService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,39 +25,29 @@ public class AdminShiftController {
 
     private final ShiftService shiftService;
     private final ShiftRepository shiftRespository;
-    private final GeocodingService geocodingService;
     private final ExcelFileService excelFileService;
 
     // 전체 근무 기록 조회
     @GetMapping
-    public AdminShiftListResponse getShifts(@PageableDefault final Pageable pageable,
+    public ListAdminShiftResponse getShifts(@PageableDefault final Pageable pageable,
                                             @RequestParam(required = false) final String name) {
         final Page<Shift> shiftPage = shiftService.getShifts(pageable, name);
-        final List<AdminShiftResponse> shifts = shiftPage.getContent().stream()
-                .map(shift -> new AdminShiftResponse(shift))
-                .collect(Collectors.toList());
-        return new AdminShiftListResponse(shifts, shiftPage.getNumber(), shiftPage.getSize(), shiftPage.getTotalPages(), shiftPage.getTotalElements());
+        return ListAdminShiftResponse.of(shiftPage.getContent(), shiftPage.getNumber(), shiftPage.getSize(), shiftPage.getTotalPages(), shiftPage.getTotalElements());
     }
 
     // 사후 출근 신청 조회
     @GetMapping("/after-checkin")
-    public AfterCheckinListResponse getAfterCheckin(@PageableDefault final Pageable pageable,
+    public ListAfterCheckinResponse getAfterCheckin(@PageableDefault final Pageable pageable,
                                                     @RequestParam(required = false) final String name) {
         final Page<Shift> shiftPage = shiftService.getAfterCheckin(pageable, name);
-        final List<AdminAfterCheckinResponse> shifts = shiftPage.getContent().stream()
-                .map(shift -> {
-                    final String address = geocodingService.getAddress(shift.getCheckin().getLatitude(), shift.getCheckin().getLongitude());
-                    return new AdminAfterCheckinResponse(shift, address);
-                })
-                .collect(Collectors.toList());
-        return new AfterCheckinListResponse(shifts, shiftPage.getNumber(), shiftPage.getSize(), shiftPage.getTotalPages(), shiftPage.getTotalElements());
+        return ListAfterCheckinResponse.of(shiftPage.getContent(), shiftPage.getNumber(), shiftPage.getSize(), shiftPage.getTotalPages(), shiftPage.getTotalElements());
     }
 
     // 출근 상태 변경
     @PatchMapping("/{shiftId}/status")
     public AdminAfterCheckinResponse updateAfterCheckinStatus(@PathVariable final Long shiftId, @Valid @RequestBody final ShiftStatusRequest requestDto) {
         final Shift shift = shiftService.updateAfterCheckinStatus(shiftId, requestDto);
-        return new AdminAfterCheckinResponse(shift, geocodingService.getAddress(shift.getCheckin().getLatitude(), shift.getCheckin().getLongitude()));
+        return new AdminAfterCheckinResponse(shift);
     }
 
     // 근무 기록 수정

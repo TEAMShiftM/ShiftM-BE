@@ -25,15 +25,19 @@ public class Checkin {
     @Column
     private Double longitude;
 
+    @Column
+    private String address;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 
     @Builder
-    public Checkin(final LocalDateTime checkinTime, final Double latitude, final Double longitude, final Status status) {
+    public Checkin(final LocalDateTime checkinTime, final Double latitude, final Double longitude, final String address, final Status status) {
         this.checkinTime = checkinTime;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.address = address;
         this.status = status;
     }
 }

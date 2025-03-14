@@ -12,15 +12,20 @@ import java.time.LocalDateTime;
 
 public record CheckinRequest(
         @NotNull
-        LocalDateTime checkinTime
+        LocalDateTime checkinTime,
+        @NotNull
+        Double latitude,
+        @NotNull
+        Double longitude
 ) {
-    public Shift toEntity(final Member member) {
+    public Shift toEntity(final Member member, final String address, final Status status) {
         return Shift.builder()
                 .checkin(Checkin.builder()
                         .checkinTime(checkinTime)
-                        .latitude(null)
-                        .longitude(null)
-                        .status(Status.AUTO_APPROVED)
+                        .latitude(latitude)
+                        .longitude(longitude)
+                        .address(address)
+                        .status(status)
                         .build())
                 .checkout(null)
                 .member(member)

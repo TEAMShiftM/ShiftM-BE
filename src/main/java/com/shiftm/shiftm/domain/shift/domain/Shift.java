@@ -47,11 +47,24 @@ public class Shift extends BaseEntity {
     }
 
     public void updateStatus(final Status status) {
-        this.checkin = new Checkin(checkin.getCheckinTime(), checkin.getLatitude(), checkin.getLongitude(), status);
+        this.checkin = Checkin.builder()
+                .checkinTime(checkin.getCheckinTime())
+                .latitude(checkin.getLatitude())
+                .longitude(checkin.getLongitude())
+                .status(status)
+                .build();
     }
 
-    public void update(final LocalDateTime checkinTime, final Double latitude, final Double longitude, final Status status, final LocalDateTime checkoutTime) {
-        this.checkin = new Checkin(checkinTime, latitude, longitude, status);
-        this.checkout = new Checkout(checkoutTime);
+    public void update(final LocalDateTime checkinTime, final Double latitude, final Double longitude, final String address, final Status status, final LocalDateTime checkoutTime) {
+        this.checkin = Checkin.builder()
+                .checkinTime(checkinTime)
+                .latitude(latitude)
+                .longitude(longitude)
+                .address(address)
+                .status(status)
+                .build();
+        this.checkout = Checkout.builder()
+                .checkoutTime(checkoutTime)
+                .build();
     }
 }

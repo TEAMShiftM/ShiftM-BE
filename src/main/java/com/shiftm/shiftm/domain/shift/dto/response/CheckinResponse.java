@@ -6,9 +6,10 @@ import java.time.LocalDateTime;
 
 public record CheckinResponse (
         Long id,
-        LocalDateTime checkinTime
+        LocalDateTime checkinTime,
+        String address
 ) {
     public CheckinResponse(final Shift shift) {
-        this(shift.getId(), shift.getCheckin().getCheckinTime());
+        this(shift.getId(), shift.getCheckin().getCheckinTime(), shift.getCheckin().getAddress());
     }
 }
