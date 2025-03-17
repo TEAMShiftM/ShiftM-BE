@@ -131,8 +131,10 @@ public class ShiftService {
     @Transactional(readOnly = true)
     public ShiftWeekResponse getWeekShifts(final String memberId) {
         final LocalDate today = LocalDate.now();
-        final LocalDate weekStart = today.with(DayOfWeek.SUNDAY);  // 일요일을 시작일로 설정
-        final LocalDate weekEnd = today.with(DayOfWeek.SATURDAY);  // 토요일을 종료일로 설정
+        final LocalDate weekStart = today.getDayOfWeek() == DayOfWeek.SUNDAY
+                ? today.with(DayOfWeek.SUNDAY)
+                : today.with(DayOfWeek.SUNDAY).minusWeeks(1); // 일요일이 아니면, 지난 주 일요일부터
+        final LocalDate weekEnd = weekStart.plusDays(6);
 
         final Company company = companyFindDao.findFirst();
         final Member member = memberFindDao.findById(memberId);
