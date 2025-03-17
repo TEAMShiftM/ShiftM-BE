@@ -9,32 +9,33 @@ import java.util.List;
 import java.util.Set;
 
 public record ShiftDayResponse(
+        LocalDate date,
         String day,
         LocalTime startTime,
-        LocalTime endTime) {
+        LocalTime endTime,
+        ShiftType type) {
 
-    // 날짜별로 ShiftDayResponse 객체 생성
-    public static ShiftDayResponse of(final LocalDate date, final LocalTime checkinTime, final LocalTime checkoutTime,
+    public static ShiftDayResponse of(final LocalDate date, final LocalTime defaultCheckinTime, final LocalTime defaultCheckoutTime,
                                       final Shift shift, final Set<LocalDate> holidays, Set<LocalDate> leaves) {
         final DayOfWeek dayOfWeek = date.getDayOfWeek();
+        final boolean isWeekend = (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY);
         final boolean isHoliday = holidays.contains(date);
         final boolean isLeave = leaves.contains(date);
-        final boolean isWeekend = (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY);
+        final boolean isWorked = (shift != null);
 
-        if (isWeekend || isHoliday || isLeave) {
-            return new ShiftDayResponse(getKoreanDay(dayOfWeek), null, null);
-        }
+        final ShiftType type = isWeekend ? ShiftType.WEEKEND : 
+                isHoliday ? ShiftType.HOLIDAY : 
+                        isLeave ? ShiftType.LEAVE :
+                                isWorked ? ShiftType.COMPLETED_SHIFT : ShiftType.SCHEDULED_SHIFT;
 
-        if (shift != null) {
-            return new ShiftDayResponse(getKoreanDay(dayOfWeek),
-                    shift.getCheckin().getCheckinTime().toLocalTime(),
-                    shift.getCheckout().getCheckoutTime().toLocalTime());
-        }
+        final LocalTime startTime = (isWeekend || isHoliday || isLeave) ? null :
+                (isWorked ? shift.getCheckin().getCheckinTime().toLocalTime() : defaultCheckinTime);
+        final LocalTime endTime = (isWeekend || isHoliday || isLeave) ? null :
+                (isWorked ? shift.getCheckout().getCheckoutTime().toLocalTime() : defaultCheckoutTime);
 
-        return new ShiftDayResponse(getKoreanDay(dayOfWeek), checkinTime, checkoutTime);
+        return new ShiftDayResponse(date, getKoreanDay(dayOfWeek), startTime, endTime, type);
     }
 
-    // 요일을 한글로 반환
     private static String getKoreanDay(final DayOfWeek day) {
         return switch (day) {
             case SUNDAY -> "일";
