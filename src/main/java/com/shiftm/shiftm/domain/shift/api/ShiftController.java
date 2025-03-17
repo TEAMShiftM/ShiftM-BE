@@ -43,4 +43,9 @@ public class ShiftController {
                 .collect(Collectors.toList());
         return new ShiftListResponse(shifts);
     }
+
+    @GetMapping("/week")
+    public ShiftWeekResponse getWeekShifts(@AuthId String memberId) {
+        return shiftService.getWeekShifts(memberId);
+    }
 }
