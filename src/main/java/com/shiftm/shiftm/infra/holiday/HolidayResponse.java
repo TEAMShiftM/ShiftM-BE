@@ -3,9 +3,13 @@ package com.shiftm.shiftm.infra.holiday;
 import java.util.List;
 
 public record HolidayResponse(
-        Header header,  // 응답 헤더
-        Body body
+        Response response
 ) {
+    public record Response(
+        Header header,
+        Body body
+    ) {}
+
     public record Header(
             String resultCode,  // 결과 코드 (예: "00")
             String resultMsg  // 결과 메시지 (예: "NORMAL SERVICE.")
