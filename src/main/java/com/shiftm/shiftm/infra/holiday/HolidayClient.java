@@ -12,9 +12,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.apache.commons.collections4.CollectionUtils.collect;
 
@@ -57,9 +59,10 @@ public class HolidayClient {
     }
 
     public List<LocalDate> getHolidaysBetweenDates(final LocalDate startDate, final LocalDate endDate) {
-        final List<LocalDate> holidays = getHolidays(startDate.getYear(), startDate.getMonthValue());
-        return holidays.stream()
-                .filter(date -> !date.isBefore(startDate) && !date.isAfter(endDate))
-                .collect(Collectors.toList());
+        return IntStream.rangeClosed(startDate.getMonthValue(), endDate.getMonthValue()) // startDate와 endDate 사이의 모든 월을 처리
+                .mapToObj(month -> getHolidays(startDate.getYear(), month)) // 각 월에 대해 공휴일 목록을 가져옴
+                .flatMap(List::stream) // List<LocalDate> 리스트를 평탄화
+                .filter(date -> !date.isBefore(startDate) && !date.isAfter(endDate)) // 날짜 범위 필터링
+                .collect(Collectors.toList()); // 결과 리스트로 모음
     }
 }
