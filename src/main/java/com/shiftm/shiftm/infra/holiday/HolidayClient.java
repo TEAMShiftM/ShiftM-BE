@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -35,23 +37,26 @@ public class HolidayClient {
     }
 
     public List<LocalDate> getHolidays(final int year, final int month) {
-        final String url = UriComponentsBuilder.fromHttpUrl(HOLIDAY_API_URL)
+        final UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(HOLIDAY_API_URL)
                 .queryParam("solYear", year)
                 .queryParam("solMonth", String.format("%02d", month))
                 .queryParam("ServiceKey", serviceKey)
                 .queryParam("_type", "json")
                 .queryParam("numOfRows", 100)
-                .toUriString();
+                .build(true);
+        final String url = uriComponents.toUriString();
+        final URI uri = URI.create(url);
 
-        final ResponseEntity<HolidayResponse> response = restTemplate.getForEntity(url, HolidayResponse.class);
+        final ResponseEntity<HolidayResponse> response = restTemplate.getForEntity(uri, HolidayResponse.class);
 
         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
             return response.getBody()
+                    .response()
                     .body()
                     .items()
                     .item()
                     .stream()
-                    .map(item -> LocalDate.parse(String.valueOf(item.locdate())))
+                    .map(item -> LocalDate.parse(String.valueOf(item.locdate()), DateTimeFormatter.ofPattern("yyyyMMdd")))
                     .collect(Collectors.toList());
         }
 
