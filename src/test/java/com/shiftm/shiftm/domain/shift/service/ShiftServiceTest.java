@@ -117,7 +117,7 @@ class ShiftServiceTest extends UnitTest {
         leaveRequest = LeaveRequest.builder()
                 .startDate(LocalDate.of(2025, 3, 17).plusDays(2))
                 .endDate(LocalDate.of(2025, 3, 17).plusDays(3))
-                .count(1.0)
+                .count(0.5)
                 .status(APPROVED)
                 .build();
     }
@@ -307,10 +307,10 @@ class ShiftServiceTest extends UnitTest {
         assertThat(weekResponse.shifts()).hasSize(7);
         assertThat(weekResponse.shifts().get(0).day()).isEqualTo("일");
         assertThat(weekResponse.shifts().get(0).type()).isEqualTo(ShiftType.WEEKEND);
-        assertThat(weekResponse.shifts().get(0).type()).isEqualTo(ShiftType.SCHEDULED_SHIFT);
+        assertThat(weekResponse.shifts().get(1).type()).isEqualTo(ShiftType.SCHEDULED_SHIFT);
         assertThat(weekResponse.shifts().get(2).type()).isEqualTo(ShiftType.HOLIDAY);
-        assertThat(weekResponse.shifts().get(3).type()).isEqualTo(ShiftType.LEAVE);
-        assertThat(weekResponse.shifts().get(4).type()).isEqualTo(ShiftType.LEAVE);
+        assertThat(weekResponse.shifts().get(3).type()).isEqualTo(ShiftType.HALF_DAY_LEAVE);
+        assertThat(weekResponse.shifts().get(4).type()).isEqualTo(ShiftType.HALF_DAY_LEAVE);
         assertThat(weekResponse.shifts().get(6).day()).isEqualTo("토");
         assertThat(weekResponse.shifts().get(0).type()).isEqualTo(ShiftType.WEEKEND);
     }

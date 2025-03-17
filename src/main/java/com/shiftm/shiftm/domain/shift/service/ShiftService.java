@@ -26,9 +26,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -138,19 +136,16 @@ public class ShiftService {
 
         final Company company = companyFindDao.findFirst();
         final Member member = memberFindDao.findById(memberId);
-        // 근무 내역 조회
-        final List<Shift> shifts = shiftRepository.findShiftsByMemberAndCheckinTimeInRange(
-                member, weekStart.atStartOfDay(), weekEnd.atTime(23, 59)
-        );
-        // 휴가 신청 내역 조회
-        final List<LeaveRequest> approvedLeaves = leaveRequestRepository.findApprovedLeaves(member, weekStart, weekEnd);
-        final Set<LocalDate> leaves = approvedLeaves.stream()
-                .flatMap(leave -> leave.getStartDate().datesUntil(leave.getEndDate().plusDays(1)))
-                .collect(Collectors.toSet());
-        // 공휴일 조회
+        final Map<LocalDate, Shift> shiftMap = shiftRepository.findShiftsByMemberAndCheckinTimeInRange(
+                member, weekStart.atStartOfDay(), weekEnd.atTime(23, 59)).stream()
+                .collect(Collectors.toMap(shift -> shift.getCheckin().getCheckinTime().toLocalDate(), shift -> shift));
+        final Map<LocalDate, Double> leaveMap = leaveRequestRepository.findApprovedLeaves(member, weekStart, weekEnd).stream()
+                .flatMap(leaveRequest -> leaveRequest.getStartDate().datesUntil(leaveRequest.getEndDate().plusDays(1))
+                        .map(leaveDate -> new AbstractMap.SimpleEntry<>(leaveDate, leaveRequest.getCount())))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         final Set<LocalDate> holidays = new HashSet<>(holidayClient.getHolidaysBetweenDates(weekStart, weekEnd));
 
-        return ShiftWeekResponse.of(weekStart, weekEnd, company.getCheckinTime(), company.getCheckoutTime(), shifts, holidays, leaves);
+        return ShiftWeekResponse.of(weekStart, weekEnd, company.getCheckinTime(), company.getCheckoutTime(), shiftMap, holidays, leaveMap);
     }
 
     private Shift findById(final Long shiftId) {

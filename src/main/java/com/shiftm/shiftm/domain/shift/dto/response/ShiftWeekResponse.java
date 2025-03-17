@@ -20,42 +20,16 @@ public record ShiftWeekResponse(
             final LocalDate weekEnd,
             final LocalTime checkinTime,
             final LocalTime checkoutTime,
-            final List<Shift> shifts,
-            final Set<LocalDate> holidays,
-            final Set<LocalDate> leaves) {
-
-        // Shift 데이터를 날짜별로 매핑
-        final Map<LocalDate, Shift> shiftMap = createShiftMap(shifts);
-
-        // ShiftDayResponse 객체 생성
-        final List<ShiftDayResponse> shiftResponses = generateShiftDayResponses(weekStart, checkinTime, checkoutTime, shiftMap, holidays, leaves);
-
-        return new ShiftWeekResponse(weekStart, weekEnd, shiftResponses);
-    }
-
-    // Shift를 날짜별로 매핑
-    private static Map<LocalDate, Shift> createShiftMap(final List<Shift> shifts) {
-        return shifts.stream()
-                .collect(Collectors.toMap(
-                        shift -> shift.getCheckin().getCheckinTime().toLocalDate(),
-                        shift -> shift
-                ));
-    }
-
-    // 주 단위로 ShiftDayResponse 객체 생성
-    private static List<ShiftDayResponse> generateShiftDayResponses(
-            final LocalDate weekStart,
-            final LocalTime checkinTime,
-            final LocalTime checkoutTime,
             final Map<LocalDate, Shift> shiftMap,
             final Set<LocalDate> holidays,
-            final Set<LocalDate> leaves) {
+            final Map<LocalDate, Double> leaveMap) {
 
-        return IntStream.range(0, 7)
+        return new ShiftWeekResponse(weekStart, weekEnd,
+                IntStream.range(0, 7)
                 .mapToObj(i -> {
                     final LocalDate date = weekStart.plusDays(i);
-                    return ShiftDayResponse.of(date, checkinTime, checkoutTime, shiftMap.get(date), holidays, leaves);
+                    return ShiftDayResponse.of(date, checkinTime, checkoutTime, shiftMap.get(date), holidays, leaveMap.get(date));
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 }
