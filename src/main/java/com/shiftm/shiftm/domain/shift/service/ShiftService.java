@@ -9,6 +9,8 @@ import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.domain.shift.domain.Shift;
 import com.shiftm.shiftm.domain.shift.domain.enums.Status;
 import com.shiftm.shiftm.domain.shift.dto.request.*;
+import com.shiftm.shiftm.domain.shift.dto.response.ShiftDayResponse;
+import com.shiftm.shiftm.domain.shift.dto.response.ShiftType;
 import com.shiftm.shiftm.domain.shift.dto.response.ShiftWeekResponse;
 import com.shiftm.shiftm.domain.shift.exception.CheckinAlreadyExistsException;
 import com.shiftm.shiftm.domain.shift.exception.ShiftNotFoundException;
@@ -34,6 +36,9 @@ import java.util.stream.Collectors;
 public class ShiftService {
     private static final LocalTime PIVOT_TIME = LocalTime.of(4, 0);
     private static final Double COMPANY_THRESHOLD = 100.0;
+    private static final Double QUARTER_DAY = 0.25;
+    private static final Double HALF_DAY = 0.5;
+    private static final Double FULL_DAY = 1.0;
 
     private final ShiftRepository shiftRepository;
     private final CompanyFindDao companyFindDao;
@@ -118,14 +123,6 @@ public class ShiftService {
         return shift;
     }
 
-    private void validateDuplicateCheckin(final Member member) {
-        final LocalDateTime start = LocalDate.now().atStartOfDay();
-        final LocalDateTime end = start.plusDays(1).minusNanos(1);
-        if (shiftRepository.existsByMemberAndCheckinTimeInRange(member, start, end)) {
-            throw new CheckinAlreadyExistsException();
-        }
-    }
-
     @Transactional(readOnly = true)
     public ShiftWeekResponse getWeekShifts(final String memberId) {
         final LocalDate today = LocalDate.now();
@@ -145,7 +142,27 @@ public class ShiftService {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         final Set<LocalDate> holidays = new HashSet<>(holidayClient.getHolidaysBetweenDates(weekStart, weekEnd));
 
-        return ShiftWeekResponse.of(weekStart, weekEnd, company.getCheckinTime(), company.getCheckoutTime(), shiftMap, holidays, leaveMap);
+        final List<ShiftDayResponse> shifts = weekStart.datesUntil(weekEnd.plusDays(1))
+                .map(date -> {
+                    final Shift shift = shiftMap.get(date);
+                    final Double leaveCount = leaveMap.get(date);
+                    final ShiftType type = determineShiftType(date, shift, leaveCount, holidays);
+                    final LocalTime startTime = determineStartTime(type, company.getCheckinTime(), shift);
+                    final LocalTime endTime = determineEndTime(type, company.getCheckoutTime(), shift, startTime);
+                    final String day = getKoreanDay(date.getDayOfWeek());
+                    return ShiftDayResponse.of(date, day, startTime, endTime, type);
+                })
+                .collect(Collectors.toList());
+
+        return ShiftWeekResponse.of(weekStart, weekEnd, shifts);
+    }
+
+    private void validateDuplicateCheckin(final Member member) {
+        final LocalDateTime start = LocalDate.now().atStartOfDay();
+        final LocalDateTime end = start.plusDays(1).minusNanos(1);
+        if (shiftRepository.existsByMemberAndCheckinTimeInRange(member, start, end)) {
+            throw new CheckinAlreadyExistsException();
+        }
     }
 
     private Shift findById(final Long shiftId) {
@@ -158,5 +175,59 @@ public class ShiftService {
         final double distance = DistanceUtil.calculateDistance(company.getLatitude(), company.getLongitude(), latitude, longitude);
 
         return distance <= COMPANY_THRESHOLD;
+    }
+
+    private ShiftType determineShiftType(final LocalDate date, final Shift shift, final Double leaveCount, final Set<LocalDate> holidays) {
+        final DayOfWeek dayOfWeek = date.getDayOfWeek();
+
+        if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
+            return ShiftType.WEEKEND;
+        }
+
+        if (holidays.contains(date)) {
+            return ShiftType.HOLIDAY;
+        }
+
+        if (leaveCount != null && leaveCount > 0) {
+            if (Double.compare(leaveCount, FULL_DAY) == 0) {
+                return ShiftType.FULL_DAY_LEAVE;
+            } else if (Double.compare(leaveCount, HALF_DAY) == 0) {
+                return ShiftType.HALF_DAY_LEAVE;
+            } else if (Double.compare(leaveCount, QUARTER_DAY) == 0) {
+                return ShiftType.QUARTER_DAY_LEAVE;
+            }
+        }
+
+        return (shift != null) ? ShiftType.COMPLETED_SHIFT : ShiftType.SCHEDULED_SHIFT;
+    }
+
+    private LocalTime determineStartTime(final ShiftType type, final LocalTime defaultCheckinTime, final Shift shift) {
+        return switch (type) {
+            case SCHEDULED_SHIFT, HALF_DAY_LEAVE, QUARTER_DAY_LEAVE -> defaultCheckinTime;
+            case COMPLETED_SHIFT -> shift.getCheckin().getCheckinTime().toLocalTime();
+            default -> null;
+        };
+    }
+
+    private LocalTime determineEndTime(final ShiftType type, final LocalTime defaultCheckoutTime, final Shift shift, final LocalTime startTime) {
+        return switch (type) {
+            case WEEKEND, HOLIDAY, FULL_DAY_LEAVE -> null;
+            case HALF_DAY_LEAVE -> startTime.plusHours(4);
+            case QUARTER_DAY_LEAVE -> startTime.plusHours(6);
+            case COMPLETED_SHIFT -> shift.getCheckout().getCheckoutTime().toLocalTime();
+            case SCHEDULED_SHIFT -> defaultCheckoutTime;
+        };
+    }
+
+    private String getKoreanDay(final DayOfWeek day) {
+        return switch (day) {
+            case SUNDAY -> "일";
+            case MONDAY -> "월";
+            case TUESDAY -> "화";
+            case WEDNESDAY -> "수";
+            case THURSDAY -> "목";
+            case FRIDAY -> "금";
+            case SATURDAY -> "토";
+        };
     }
 }

@@ -13,23 +13,12 @@ import java.util.stream.IntStream;
 public record ShiftWeekResponse(
         LocalDate weekStart,
         LocalDate weekEnd,
-        List<ShiftDayResponse> shifts) {
-
+        List<ShiftDayResponse> shifts
+) {
     public static ShiftWeekResponse of(
             final LocalDate weekStart,
             final LocalDate weekEnd,
-            final LocalTime checkinTime,
-            final LocalTime checkoutTime,
-            final Map<LocalDate, Shift> shiftMap,
-            final Set<LocalDate> holidays,
-            final Map<LocalDate, Double> leaveMap) {
-
-        return new ShiftWeekResponse(weekStart, weekEnd,
-                IntStream.range(0, 7)
-                .mapToObj(i -> {
-                    final LocalDate date = weekStart.plusDays(i);
-                    return ShiftDayResponse.of(date, checkinTime, checkoutTime, shiftMap.get(date), holidays, leaveMap.get(date));
-                })
-                .collect(Collectors.toList()));
+            final List<ShiftDayResponse> shifts) {
+        return new ShiftWeekResponse(weekStart, weekEnd, shifts);
     }
 }
