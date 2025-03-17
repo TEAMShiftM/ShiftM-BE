@@ -18,7 +18,7 @@ public class LeaveTypeController {
     private final LeaveTypeService leaveTypeService;
 
     @GetMapping
-    public ListLeaveTypeResponse getLeaveTypes() {
+    public ListLeaveTypeResponse getAllLeaveType() {
         final List<LeaveType> leaveTypes = leaveTypeService.getAllLeaveType();
         return ListLeaveTypeResponse.of(leaveTypes);
     }

@@ -4,7 +4,6 @@ import com.shiftm.shiftm.domain.leave.domain.LeaveType;
 import com.shiftm.shiftm.domain.leave.dto.request.LeaveTypeRequest;
 import com.shiftm.shiftm.domain.leave.exception.DuplicatedNameException;
 import com.shiftm.shiftm.domain.leave.exception.LeaveTypeLockedException;
-import com.shiftm.shiftm.domain.leave.exception.LeaveTypeNotFoundException;
 import com.shiftm.shiftm.domain.leave.repository.LeaveTypeFindDao;
 import com.shiftm.shiftm.domain.leave.repository.LeaveTypeRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +32,7 @@ public class LeaveTypeService {
 
     @Transactional
     public LeaveType updateLeaveType(final Long leaveTypeId, final LeaveTypeRequest requestDto) {
-        final LeaveType leaveType = leaveTypeFindDao.findById(leaveTypeId);
-
-        validateActiveLeaveType(leaveType);
+        final LeaveType leaveType = leaveTypeFindDao.findValidById(leaveTypeId);
 
         validateStatutoryLeaveType(leaveType.getName());
 
@@ -52,11 +49,9 @@ public class LeaveTypeService {
 
     @Transactional
     public void deleteLeaveType(final Long leaveTypeId) {
-        final LeaveType leaveType = leaveTypeFindDao.findById(leaveTypeId);
+        final LeaveType leaveType = leaveTypeFindDao.findValidById(leaveTypeId);
 
         validateStatutoryLeaveType(leaveType.getName());
-
-        validateActiveLeaveType(leaveType);
 
         leaveType.setDeletedAt(LocalDateTime.now());
     }
@@ -70,12 +65,6 @@ public class LeaveTypeService {
     private void validateStatutoryLeaveType(final String name) {
         if (STATUTORY_LEAVE_TYPE.contains(name)) {
             throw new LeaveTypeLockedException();
-        }
-    }
-
-    private void validateActiveLeaveType(final LeaveType leaveType) {
-        if (leaveType.getDeletedAt() != null) {
-            throw new LeaveTypeNotFoundException(leaveType.getId());
         }
     }
 }

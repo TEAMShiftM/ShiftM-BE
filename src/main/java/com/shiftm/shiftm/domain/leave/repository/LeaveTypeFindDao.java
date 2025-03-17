@@ -17,6 +17,17 @@ public class LeaveTypeFindDao {
         return leaveTypeRepository.findById(id).orElseThrow(() -> new LeaveTypeNotFoundException(id));
     }
 
+    public LeaveType findValidById(final Long id) {
+        final LeaveType leaveType = leaveTypeRepository.findById(id)
+                .orElseThrow(() -> new LeaveTypeNotFoundException(id));
+
+        if (leaveType.getDeletedAt() != null) {
+            throw new LeaveTypeNotFoundException(id);
+        }
+
+        return leaveType;
+    }
+
     public List<LeaveType> findByDeletedAtIsNull() {
         return leaveTypeRepository.findByDeletedAtIsNull();
     }

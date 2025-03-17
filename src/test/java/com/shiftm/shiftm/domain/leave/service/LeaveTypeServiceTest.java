@@ -118,6 +118,19 @@ class LeaveTypeServiceTest extends UnitTest {
         assertThrows(LeaveTypeLockedException.class, () -> leaveTypeService.updateLeaveType(null, requestDto));
     }
 
+    @DisplayName("연차 유형 수정 실패 - 삭제된 연차 유형")
+    @Test
+    public void 연차_유형_수정_실패_삭제된_연차_유형() {
+        // given
+        final LeaveTypeRequest requestDto = new LeaveTypeRequest("경조사 휴가");
+
+        when(leaveTypeRepository.findById(any())).thenReturn(Optional.of(leaveType));
+        leaveType.setDeletedAt(LocalDateTime.now());
+
+        // when, then
+        assertThrows(LeaveTypeNotFoundException.class, () -> leaveTypeService.updateLeaveType(null, requestDto));
+    }
+
     @DisplayName("연차 유형 목록 조회")
     @Test
     public void 연차_유형_목록_조회() {
@@ -143,5 +156,16 @@ class LeaveTypeServiceTest extends UnitTest {
 
         // when, then
         assertThrows(LeaveTypeLockedException.class, () -> leaveTypeService.deleteLeaveType(null));
+    }
+
+    @DisplayName("연차 유형 삭제 실패 - 삭제된 연차 유형")
+    @Test
+    public void 연차_유형_삭제_실패_삭제된_연차_유형() {
+        // given
+        when(leaveTypeRepository.findById(any())).thenReturn(Optional.of(leaveType));
+        leaveType.setDeletedAt(LocalDateTime.now());
+
+        // when, then
+        assertThrows(LeaveTypeNotFoundException.class, () -> leaveTypeService.deleteLeaveType(null));
     }
 }
