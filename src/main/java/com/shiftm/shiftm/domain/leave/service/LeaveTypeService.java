@@ -3,13 +3,16 @@ package com.shiftm.shiftm.domain.leave.service;
 import com.shiftm.shiftm.domain.leave.domain.LeaveType;
 import com.shiftm.shiftm.domain.leave.dto.request.LeaveTypeRequest;
 import com.shiftm.shiftm.domain.leave.exception.DuplicatedNameException;
+import com.shiftm.shiftm.domain.leave.exception.LeaveExistsException;
 import com.shiftm.shiftm.domain.leave.exception.LeaveTypeLockedException;
+import com.shiftm.shiftm.domain.leave.repository.LeaveFindDao;
 import com.shiftm.shiftm.domain.leave.repository.LeaveTypeFindDao;
 import com.shiftm.shiftm.domain.leave.repository.LeaveTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,6 +22,7 @@ public class LeaveTypeService {
 
     private static final List<String> STATUTORY_LEAVE_TYPE = List.of("연차휴가", "출산휴가", "배우자출산휴가", "생리휴가", "가족돌봄휴가");
 
+    private final LeaveFindDao leaveFindDao;
     private final LeaveTypeFindDao leaveTypeFindDao;
     private final LeaveTypeRepository leaveTypeRepository;
 
@@ -53,6 +57,8 @@ public class LeaveTypeService {
 
         validateStatutoryLeaveType(leaveType.getName());
 
+        validateDeletableLeaveType(leaveType.getId());
+
         leaveType.setDeletedAt(LocalDateTime.now());
     }
 
@@ -65,6 +71,12 @@ public class LeaveTypeService {
     private void validateStatutoryLeaveType(final String name) {
         if (STATUTORY_LEAVE_TYPE.contains(name)) {
             throw new LeaveTypeLockedException();
+        }
+    }
+
+    private void validateDeletableLeaveType(final Long leaveTypeId) {
+        if (leaveFindDao.existsValidLeaveForLeaveType(leaveTypeId, LocalDate.now())) {
+            throw new LeaveExistsException();
         }
     }
 }

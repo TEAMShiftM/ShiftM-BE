@@ -5,7 +5,7 @@ import com.shiftm.shiftm.domain.leave.domain.LeaveType;
 import com.shiftm.shiftm.domain.leave.dto.request.CreateLeaveRequest;
 import com.shiftm.shiftm.domain.leave.dto.request.UpdateLeaveRequest;
 import com.shiftm.shiftm.domain.leave.dto.response.LeaveCountResponse;
-import com.shiftm.shiftm.domain.leave.repository.LeaveDao;
+import com.shiftm.shiftm.domain.leave.repository.LeaveFindDao;
 import com.shiftm.shiftm.domain.leave.repository.LeaveRepository;
 import com.shiftm.shiftm.domain.leave.repository.LeaveTypeFindDao;
 import com.shiftm.shiftm.domain.member.domain.Member;
@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -28,7 +29,7 @@ public class LeaveService {
     private final MemberRepository memberRepository;
     private final MemberFindDao memberFindDao;
     private final LeaveTypeFindDao leaveTypeFindDao;
-    private final LeaveDao leaveDao;
+    private final LeaveFindDao leaveDao;
     private final LeaveRepository leaveRepository;
 
     @Transactional
@@ -41,7 +42,7 @@ public class LeaveService {
 
         final List<Leave> leaves = requestDto.memberIds().stream()
                 .map(memberId -> createLeave(memberId, toEntity(requestDto, leaveType)))
-                .toList();
+                .collect(Collectors.toList());
 
         leaveRepository.saveAll(leaves);
     }
@@ -113,7 +114,7 @@ public class LeaveService {
         if (memberIds.size() != members.size()) {
             final List<String> validIds = members.stream()
                     .map(Member::getId)
-                    .toList();
+                    .collect(Collectors.toList());
 
             memberIds.stream()
                     .filter(id -> !validIds.contains(id))

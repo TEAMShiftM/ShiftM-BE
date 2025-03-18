@@ -4,10 +4,10 @@ import com.shiftm.shiftm.domain.leave.domain.LeaveType;
 import com.shiftm.shiftm.domain.leave.domain.LeaveTypeBuilder;
 import com.shiftm.shiftm.domain.leave.dto.request.LeaveTypeRequest;
 import com.shiftm.shiftm.domain.leave.exception.DuplicatedNameException;
+import com.shiftm.shiftm.domain.leave.exception.LeaveExistsException;
 import com.shiftm.shiftm.domain.leave.exception.LeaveTypeLockedException;
 import com.shiftm.shiftm.domain.leave.exception.LeaveTypeNotFoundException;
-import com.shiftm.shiftm.domain.leave.repository.LeaveTypeFindDao;
-import com.shiftm.shiftm.domain.leave.repository.LeaveTypeRepository;
+import com.shiftm.shiftm.domain.leave.repository.*;
 import com.shiftm.shiftm.test.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,15 +29,18 @@ class LeaveTypeServiceTest extends UnitTest {
 
     private LeaveTypeFindDao leaveTypeFindDao;
 
+    private LeaveFindDao leaveFindDao;
+
     private LeaveType leaveType;
 
     private LeaveType statutoryLeaveType;
 
     @BeforeEach
     public void setUp() {
+        leaveFindDao = mock(LeaveFindDao.class);
         leaveTypeRepository = mock(LeaveTypeRepository.class);
         leaveTypeFindDao = new LeaveTypeFindDao(leaveTypeRepository);
-        leaveTypeService = new LeaveTypeService(leaveTypeFindDao, leaveTypeRepository);
+        leaveTypeService = new LeaveTypeService(leaveFindDao, leaveTypeFindDao, leaveTypeRepository);
 
         statutoryLeaveType = LeaveTypeBuilder.build();
         leaveType = new LeaveType("경조사 휴가");
@@ -167,5 +170,16 @@ class LeaveTypeServiceTest extends UnitTest {
 
         // when, then
         assertThrows(LeaveTypeNotFoundException.class, () -> leaveTypeService.deleteLeaveType(null));
+    }
+
+    @DisplayName("연차 유형 삭제 실패 - 연차 존재")
+    @Test
+    public void 연차_유형_삭제_실패_연차_존재() {
+        // given
+        when(leaveTypeRepository.findById(any())).thenReturn(Optional.of(leaveType));
+        when(leaveFindDao.existsValidLeaveForLeaveType(any(), any())).thenReturn(true);
+
+        // when, then
+        assertThrows(LeaveExistsException.class, () -> leaveTypeService.deleteLeaveType(null));
     }
 }
