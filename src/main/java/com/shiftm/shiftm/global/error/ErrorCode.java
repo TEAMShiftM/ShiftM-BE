@@ -25,6 +25,10 @@ public enum ErrorCode {
     /* LEAVE TYPE ERROR */
     DUPLICATED_NAME(400, "LVT001", "It Is Duplicated Name"),
     LEAVE_TYPE_NOT_FOUND(404, "LVT002", "Leave type not found"),
+    LEAVE_TYPE_LOCKED(400, "LVT003", "Statutory leave type cannot modify or delete"),
+
+    /* LEAVE ERROR */
+    LEAVE_EXISTS(400, "LEV001", "Leave exists and cannot be deleted"),
 
     /* COMPANY ERROR */
     COMPANY_ALREADY_EXISTS(404, "COMPANY001", "Company Is Already Exists"),
