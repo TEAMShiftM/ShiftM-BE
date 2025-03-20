@@ -45,7 +45,7 @@ public class ShiftController {
     }
 
     @GetMapping("/week")
-    public ShiftWeekResponse getWeekShifts(@AuthId String memberId) {
+    public ShiftWeekResponse getWeekShifts(@AuthId final String memberId) {
         return shiftService.getWeekShifts(memberId);
     }
 }
