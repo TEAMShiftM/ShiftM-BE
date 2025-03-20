@@ -2,7 +2,6 @@ package com.shiftm.shiftm.domain.shift.service;
 
 import com.shiftm.shiftm.domain.company.domain.Company;
 import com.shiftm.shiftm.domain.company.repository.CompanyFindDao;
-import com.shiftm.shiftm.domain.leaverequest.domain.LeaveRequest;
 import com.shiftm.shiftm.domain.leaverequest.repository.LeaveRequestRepository;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
@@ -13,7 +12,7 @@ import com.shiftm.shiftm.domain.shift.dto.response.ShiftDayResponse;
 import com.shiftm.shiftm.domain.shift.dto.response.ShiftType;
 import com.shiftm.shiftm.domain.shift.dto.response.ShiftWeekResponse;
 import com.shiftm.shiftm.domain.shift.exception.CheckinAlreadyExistsException;
-import com.shiftm.shiftm.domain.shift.exception.ShiftNotFoundException;
+import com.shiftm.shiftm.domain.shift.repository.ShiftFindDao;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
 import com.shiftm.shiftm.global.util.DistanceUtil;
 import com.shiftm.shiftm.infra.geocoding.KakaoGeocodingClient;
@@ -46,6 +45,7 @@ public class ShiftService {
     private final MemberFindDao memberFindDao;
     private final HolidayClient holidayClient;
     private final LeaveRequestRepository leaveRequestRepository;
+    private final ShiftFindDao shiftFindDao;
 
     @Transactional
     public Shift createCheckin(final String memberId, final CheckinRequest requestDto) {
@@ -75,7 +75,7 @@ public class ShiftService {
         final Member member = memberFindDao.findById(memberId);
         final LocalDateTime start = (startDate != null) ? startDate.atStartOfDay() : null;
         final LocalDateTime end = (endDate != null) ? endDate.plusDays(1).atStartOfDay().minusNanos(1) : null;
-        return shiftRepository.findShiftsByMemberAndCheckinTimeInRange(member, start, end);
+        return shiftFindDao.findShiftsByMemberAndCheckinTimeInRange(member, start, end);
     }
 
     @Transactional(readOnly = true)
@@ -87,9 +87,8 @@ public class ShiftService {
 
         final LocalDateTime start = (LocalDateTime.now().isBefore(pivot)) ? startOfDay.minusDays(1) : startOfDay;
         final LocalDateTime end = start.plusDays(1).minusNanos(1);
-        final Shift shift = shiftRepository.findShiftByMemberAndCheckinTimeInRange(member, start, end)
-                .orElseThrow(() -> new ShiftNotFoundException());
-        return shift;
+
+        return shiftFindDao.findShiftByMemberAndCheckinTimeInRange(member, start, end);
     }
 
     @Transactional(readOnly = true)
@@ -109,14 +108,14 @@ public class ShiftService {
     }
 
     public Shift updateAfterCheckinStatus(final Long shiftId, final ShiftStatusRequest requestDto) {
-        final Shift shift = findById(shiftId);
+        final Shift shift = shiftFindDao.findById(shiftId);
         shift.updateStatus(requestDto.status());
         return shift;
     }
 
     @Transactional
     public Shift updateShift(final Long shiftId, final ShiftRequest requestDto) {
-        final Shift shift = findById(shiftId);
+        final Shift shift = shiftFindDao.findById(shiftId);
         final String address = geocodingClient.getAddress(requestDto.latitude(), requestDto.longitude());
         shift.update(requestDto.checkinTime(), requestDto.latitude(),
                 requestDto.longitude(), address, requestDto.status(), requestDto.checkoutTime());
@@ -128,12 +127,12 @@ public class ShiftService {
         final LocalDate today = LocalDate.now();
         final LocalDate weekStart = today.getDayOfWeek() == DayOfWeek.SUNDAY
                 ? today.with(DayOfWeek.SUNDAY)
-                : today.with(DayOfWeek.SUNDAY).minusWeeks(1); // 일요일이 아니면, 지난 주 일요일부터
+                : today.with(DayOfWeek.SUNDAY).minusWeeks(1);
         final LocalDate weekEnd = weekStart.plusDays(6);
 
         final Company company = companyFindDao.findFirst();
         final Member member = memberFindDao.findById(memberId);
-        final Map<LocalDate, Shift> shiftMap = shiftRepository.findShiftsByMemberAndCheckinTimeInRange(
+        final Map<LocalDate, Shift> shiftMap = shiftFindDao.findShiftsByMemberAndCheckinTimeInRange(
                 member, weekStart.atStartOfDay(), weekEnd.atTime(23, 59)).stream()
                 .collect(Collectors.toMap(shift -> shift.getCheckin().getCheckinTime().toLocalDate(), shift -> shift));
         final Map<LocalDate, Double> leaveMap = leaveRequestRepository.findApprovedLeaves(member, weekStart, weekEnd).stream()
@@ -160,14 +159,9 @@ public class ShiftService {
     private void validateDuplicateCheckin(final Member member) {
         final LocalDateTime start = LocalDate.now().atStartOfDay();
         final LocalDateTime end = start.plusDays(1).minusNanos(1);
-        if (shiftRepository.existsByMemberAndCheckinTimeInRange(member, start, end)) {
+        if (shiftFindDao.existsByMemberAndCheckinTimeInRange(member, start, end)) {
             throw new CheckinAlreadyExistsException();
         }
-    }
-
-    private Shift findById(final Long shiftId) {
-        return shiftRepository.findById(shiftId)
-                .orElseThrow(() -> new ShiftNotFoundException());
     }
 
     private boolean isWithinDistance(final double latitude, final double longitude) {
