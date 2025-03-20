@@ -3,6 +3,8 @@ package com.shiftm.shiftm.domain.shift.service;
 import com.shiftm.shiftm.domain.company.domain.Company;
 import com.shiftm.shiftm.domain.company.repository.CompanyFindDao;
 import com.shiftm.shiftm.domain.company.repository.CompanyRepository;
+import com.shiftm.shiftm.domain.leaverequest.domain.LeaveRequest;
+import com.shiftm.shiftm.domain.leaverequest.repository.LeaveRequestRepository;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.domain.shift.domain.Checkin;
@@ -11,10 +13,14 @@ import com.shiftm.shiftm.domain.shift.domain.Shift;
 import com.shiftm.shiftm.domain.shift.domain.enums.Status;
 import com.shiftm.shiftm.domain.shift.dto.request.CheckinRequest;
 import com.shiftm.shiftm.domain.shift.dto.request.CheckoutRequest;
+import com.shiftm.shiftm.domain.shift.dto.response.ShiftDayResponse;
+import com.shiftm.shiftm.domain.shift.dto.response.ShiftType;
+import com.shiftm.shiftm.domain.shift.dto.response.ShiftWeekResponse;
 import com.shiftm.shiftm.domain.shift.exception.CheckinAlreadyExistsException;
 import com.shiftm.shiftm.domain.shift.exception.ShiftNotFoundException;
 import com.shiftm.shiftm.domain.shift.repository.ShiftRepository;
 import com.shiftm.shiftm.infra.geocoding.KakaoGeocodingClient;
+import com.shiftm.shiftm.infra.holiday.HolidayClient;
 import com.shiftm.shiftm.test.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,10 +28,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import static com.shiftm.shiftm.domain.leaverequest.domain.enums.Status.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -50,6 +61,12 @@ class ShiftServiceTest extends UnitTest {
     @Mock
     private MemberFindDao memberFindDao;
 
+    @Mock
+    private HolidayClient holidayClient;
+
+    @Mock
+    private LeaveRequestRepository leaveRequestRepository;
+
     private LocalDateTime now;
     private Member member;
     private Shift shift;
@@ -58,6 +75,7 @@ class ShiftServiceTest extends UnitTest {
     private Checkin afterCheckin;
     private Checkout checkout;
     private Company company;
+    private LeaveRequest leaveRequest;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -93,6 +111,14 @@ class ShiftServiceTest extends UnitTest {
         company = Company.builder()
                 .longitude(0.0)
                 .latitude(0.0)
+                .checkinTime(LocalTime.of(9, 0))
+                .checkoutTime(LocalTime.of(18, 0))
+                .build();
+        leaveRequest = LeaveRequest.builder()
+                .startDate(LocalDate.of(2025, 3, 17).plusDays(2))
+                .endDate(LocalDate.of(2025, 3, 17).plusDays(3))
+                .count(0.5)
+                .status(APPROVED)
                 .build();
     }
 
@@ -259,5 +285,33 @@ class ShiftServiceTest extends UnitTest {
 
         // then
         assertThat(getShifts).hasSize(2);
+    }
+
+    @DisplayName("주간 근무 일정 조회 성공 - 주어진 날짜 범위에 맞는 근무 일정 조회")
+    @Test
+    public void 주간_근무_일정_조회_성공() {
+        // given
+        final LocalDate today = LocalDate.of(2025, 3, 17);
+        final List<Shift> shifts = List.of();
+
+        when(companyFindDao.findFirst()).thenReturn(company);
+        when(memberFindDao.findById(any())).thenReturn(member);
+        when(shiftRepository.findShiftsByMemberAndCheckinTimeInRange(any(), any(), any())).thenReturn(shifts);
+        when(holidayClient.getHolidaysBetweenDates(any(), any())).thenReturn(List.of(today.plusDays(1)));
+        when(leaveRequestRepository.findApprovedLeaves(any(), any(), any())).thenReturn(List.of(leaveRequest));
+
+        // when
+        final ShiftWeekResponse weekResponse = shiftService.getWeekShifts(member.getId());
+
+        // then
+        assertThat(weekResponse.shifts()).hasSize(7);
+        assertThat(weekResponse.shifts().get(0).day()).isEqualTo("일");
+        assertThat(weekResponse.shifts().get(0).type()).isEqualTo(ShiftType.WEEKEND);
+        assertThat(weekResponse.shifts().get(1).type()).isEqualTo(ShiftType.SCHEDULED_SHIFT);
+        assertThat(weekResponse.shifts().get(2).type()).isEqualTo(ShiftType.HOLIDAY);
+        assertThat(weekResponse.shifts().get(3).type()).isEqualTo(ShiftType.HALF_DAY_LEAVE);
+        assertThat(weekResponse.shifts().get(4).type()).isEqualTo(ShiftType.HALF_DAY_LEAVE);
+        assertThat(weekResponse.shifts().get(6).day()).isEqualTo("토");
+        assertThat(weekResponse.shifts().get(0).type()).isEqualTo(ShiftType.WEEKEND);
     }
 }
