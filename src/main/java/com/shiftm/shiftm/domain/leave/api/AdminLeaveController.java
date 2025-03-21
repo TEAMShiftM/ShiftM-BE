@@ -45,7 +45,7 @@ public class AdminLeaveController {
         return new LeaveListResponse(content, page, size, leaves.getTotalPages(), leaves.getTotalElements());
     }
 
-    @PatchMapping("/{memberId}")
+    @GetMapping("/{memberId}")
     public LeaveListResponse getLeave(@RequestParam(defaultValue = "0") final int page, @RequestParam(defaultValue = "10") final int size,
                                       @PathVariable("memberId") final String memberId) {
         final Pageable pageable = PageRequest.of(page, size);
