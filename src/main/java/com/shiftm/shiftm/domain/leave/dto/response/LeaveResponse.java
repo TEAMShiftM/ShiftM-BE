@@ -10,11 +10,13 @@ public record LeaveResponse(
         Long leaveId,
         Double count,
         Double usedCount,
+        Long leaveTypeId,
         String leaveType,
         LocalDate expirationDate
 ) {
     public LeaveResponse(final Leave leave) {
         this(leave.getMember().getId(), leave.getMember().getName(), leave.getId(), leave.getCount(),
-                leave.getUsedCount(), leave.getLeaveType().getName(), leave.getExpirationDate());
+                leave.getUsedCount(), leave.getLeaveType().getId(), leave.getLeaveType().getName(),
+                leave.getExpirationDate());
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 public record CreateLeaveRequest(
         @NotNull
         @Size(min = 1)
-        List<String> memberIds,
+        List<String> memberIdList,
         @NotNull
         Long leaveTypeId,
         @NotNull
