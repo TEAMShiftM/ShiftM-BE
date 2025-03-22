@@ -30,4 +30,8 @@ public class MemberFindDao {
     public List<Member> findAllByName(final String name) {
         return memberRepository.findAllByName(name);
     }
+
+    public List<Member> findByIdIn(final List<String> idList) {
+        return memberRepository.findByIdIn(idList);
+    }
 }
