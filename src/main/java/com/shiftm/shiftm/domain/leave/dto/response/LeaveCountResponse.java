@@ -15,10 +15,10 @@ public record LeaveCountResponse(
         }
         return new LeaveCountResponse(
                 leaveTuple.get(0, Long.class),
-                leaveTuple.get(0, Long.class),
-                leaveTuple.get(0, String.class),
-                leaveTuple.get(0, Double.class),
-                leaveTuple.get(0, Double.class)
+                leaveTuple.get(1, Long.class),
+                leaveTuple.get(2, String.class),
+                leaveTuple.get(3, Double.class),
+                leaveTuple.get(4, Double.class)
         );
     }
 }
