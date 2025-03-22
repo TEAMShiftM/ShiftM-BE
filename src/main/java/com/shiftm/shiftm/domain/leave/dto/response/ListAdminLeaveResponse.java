@@ -18,6 +18,7 @@ public record ListAdminLeaveResponse(
                 .map(AdminLeaveResponse::new)
                 .collect(Collectors.toList());
 
-        return new ListAdminLeaveResponse(content, (leaveList.isEmpty()) ? page : page + 1, size, totalPages, totalElements);
+        return new ListAdminLeaveResponse(content, (leaveList.isEmpty()) ? page : page + 1, size, totalPages,
+                totalElements);
     }
 }

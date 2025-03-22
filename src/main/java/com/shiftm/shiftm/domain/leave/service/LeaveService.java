@@ -1,19 +1,19 @@
 package com.shiftm.shiftm.domain.leave.service;
 
+import com.querydsl.core.Tuple;
 import com.shiftm.shiftm.domain.leave.domain.Leave;
 import com.shiftm.shiftm.domain.leave.domain.LeaveType;
 import com.shiftm.shiftm.domain.leave.dto.request.CreateLeaveRequest;
 import com.shiftm.shiftm.domain.leave.dto.request.UpdateLeaveRequest;
-import com.shiftm.shiftm.domain.leave.dto.response.LeaveCountResponse;
 import com.shiftm.shiftm.domain.leave.repository.LeaveFindDao;
 import com.shiftm.shiftm.domain.leave.repository.LeaveRepository;
 import com.shiftm.shiftm.domain.leave.repository.LeaveTypeFindDao;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.exception.MemberNotFoundException;
 import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
-import com.shiftm.shiftm.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,30 +26,29 @@ import java.util.stream.Collectors;
 @Service
 public class LeaveService {
 
-    private final MemberRepository memberRepository;
+    private final LeaveFindDao leaveFindDao;
     private final MemberFindDao memberFindDao;
     private final LeaveTypeFindDao leaveTypeFindDao;
-    private final LeaveFindDao leaveDao;
     private final LeaveRepository leaveRepository;
 
     @Transactional
-    public void createLeaves(final CreateLeaveRequest requestDto) {
-        final List<Member> members = memberRepository.findByIdIn(requestDto.memberIds());
+    public List<Leave> createLeaves(final CreateLeaveRequest requestDto) {
+        final List<Member> memberList = memberFindDao.findByIdIn(requestDto.memberIdList());
 
-        validateMembers(requestDto.memberIds(), members);
+        validateMembers(requestDto.memberIdList(), memberList);
 
         final LeaveType leaveType = leaveTypeFindDao.findById(requestDto.leaveTypeId());
 
-        final List<Leave> leaves = requestDto.memberIds().stream()
-                .map(memberId -> createLeave(memberId, toEntity(requestDto, leaveType)))
+        final List<Leave> leaveList = memberList.stream()
+                .map(member -> createLeave(member, toEntity(requestDto, leaveType)))
                 .collect(Collectors.toList());
 
-        leaveRepository.saveAll(leaves);
+        return leaveRepository.saveAll(leaveList);
     }
 
     @Transactional
-    public void updateLeave(final Long leaveId, final UpdateLeaveRequest requestDto) {
-        final Leave leave = leaveDao.findById(leaveId);
+    public Leave updateLeave(final Long leaveId, final UpdateLeaveRequest requestDto) {
+        final Leave leave = leaveFindDao.findById(leaveId);
 
         if (leave.getLeaveType().getId() != requestDto.leaveTypeId()) {
             final LeaveType leaveType = leaveTypeFindDao.findById(requestDto.leaveTypeId());
@@ -58,40 +57,31 @@ public class LeaveService {
         }
 
         leave.updateLeave(requestDto.count(), requestDto.usedCount(), requestDto.expirationDate());
+
+        return leave;
     }
 
     @Transactional(readOnly = true)
-    public LeaveCountResponse getCountByLeaveType(final String memberId, final Long leaveTypeId) {
-        final List<Leave> leaves = leaveRepository.findLeaves(memberId, leaveTypeId, LocalDate.now());
+    public Tuple getLeaveCountByLeaveType(final String memberId, final Long leaveTypeId) {
+        final LeaveType leaveType = leaveTypeFindDao.findById(leaveTypeId);
 
-        final Double usableCount = leaves.stream()
-                .mapToDouble(leave -> leave.getCount() - leave.getUsedCount())
-                .sum();
-
-        final List<Long> leaveIds = leaves.stream()
-                .map(Leave::getId)
-                .toList();
-
-        return new LeaveCountResponse(leaveIds, usableCount);
+        return leaveFindDao.findByMemberIdAndLeaveTypeAndExpirationDate(memberId, leaveType, LocalDate.now());
     }
 
     @Transactional(readOnly = true)
-    public Page<Leave> getLeaveInfo(final String memberId, final Pageable pageable) {
+    public Page<Leave> getAllLeave(final int page, final int size) {
+        final Pageable pageable = PageRequest.of(page, size);
+
+        return leaveFindDao.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Leave> getLeaveByMember(final String memberId, final int page, final int size) {
         final Member member = memberFindDao.findById(memberId);
 
-        return leaveRepository.findByMember(member, pageable);
-    }
+        final Pageable pageable = PageRequest.of(page, size);
 
-    @Transactional(readOnly = true)
-    public Page<Leave> getLeaves(final Pageable pageable) {
-        return leaveRepository.findAll(pageable);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<Leave> getLeave(final Pageable pageable, final String memberId) {
-        final Member member = memberFindDao.findById(memberId);
-
-        return leaveRepository.findByMember(member, pageable);
+        return leaveFindDao.findLeaveByMember(member, pageable);
     }
 
     private Leave toEntity(final CreateLeaveRequest requestDto, final LeaveType leaveType) {
@@ -102,21 +92,19 @@ public class LeaveService {
         return leave;
     }
 
-    private Leave createLeave(final String memberId, final Leave leave) {
-        final Member member = memberFindDao.findById(memberId);
-
+    private Leave createLeave(final Member member, final Leave leave) {
         leave.updateMember(member);
 
         return leave;
     }
 
-    private void validateMembers(final List<String> memberIds, final List<Member> members) {
-        if (memberIds.size() != members.size()) {
+    private void validateMembers(final List<String> memberIdList, final List<Member> members) {
+        if (memberIdList.size() != members.size()) {
             final List<String> validIds = members.stream()
                     .map(Member::getId)
                     .collect(Collectors.toList());
 
-            memberIds.stream()
+            memberIdList.stream()
                     .filter(id -> !validIds.contains(id))
                     .findAny()
                     .ifPresent(id -> {

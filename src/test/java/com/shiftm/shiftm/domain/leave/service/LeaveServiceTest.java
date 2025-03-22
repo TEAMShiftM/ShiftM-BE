@@ -65,9 +65,11 @@ class LeaveServiceTest extends UnitTest {
         leaveList = new ArrayList<>();
 
         memberList = new ArrayList<>();
+
         Member member1 = Member.builder().id("shiftm1").build();
         Member member2 = Member.builder().id("shiftm2").build();
         Member member3 = Member.builder().id("shiftm3").build();
+
         memberList.add(member1);
         memberList.add(member2);
         memberList.add(member3);
@@ -80,6 +82,7 @@ class LeaveServiceTest extends UnitTest {
         final CreateLeaveRequest requestDto = CreateLeaveRequestBuilder.build();
 
         leave.updateLeaveType(leaveType);
+
         leave.updateMember(memberList.get(0));
         leaveList.add(leave);
         leave.updateMember(memberList.get(1));
@@ -105,12 +108,16 @@ class LeaveServiceTest extends UnitTest {
 
         when(leaveFindDao.findById(any())).thenReturn(leave);
         when(leaveTypeFindDao.findById(any())).thenReturn(leaveType);
+
         leave.updateLeaveType(leaveType);
 
         // when
-        final Leave leave = leaveService.updateLeave(null, requestDto);
+        final Leave updatedLeave = leaveService.updateLeave(null, requestDto);
 
         // then
-        assertThat(leave.getLeaveType()).isEqualTo(leaveType);
+        assertThat(updatedLeave.getLeaveType()).isEqualTo(leaveType);
+        assertThat(updatedLeave.getExpirationDate()).isEqualTo(leave.getExpirationDate());
+        assertThat(updatedLeave.getCount()).isEqualTo(leave.getCount());
+        assertThat(updatedLeave.getUsedCount()).isEqualTo(leave.getUsedCount());
     }
 }
