@@ -9,6 +9,8 @@ import com.shiftm.shiftm.domain.leaverequest.dto.request.LeaveRequestStatusReque
 import com.shiftm.shiftm.domain.leaverequest.exception.StatusAlreadyExistsException;
 import com.shiftm.shiftm.domain.leaverequest.repository.LeaveRequestFindDao;
 import com.shiftm.shiftm.domain.leaverequest.repository.LeaveRequestRepository;
+import com.shiftm.shiftm.domain.member.domain.Member;
+import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
 import com.shiftm.shiftm.test.UnitTest;
 import jdk.jfr.Description;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +29,9 @@ public class LeaveRequestServiceTest extends UnitTest {
     private LeaveRequestService leaveRequestService;
 
     @Mock
+    private MemberFindDao memberFindDao;
+
+    @Mock
     private LeaveRequestFindDao leaveRequestFindDao;
 
     @Mock
@@ -39,7 +44,7 @@ public class LeaveRequestServiceTest extends UnitTest {
     void setUp() {
     }
 
-    @Description("연차 요청 상태 변경 성공 - 상태 이미 확정")
+    @Description("연차 요청 상태 변경 성공")
     @Test
     void 연차_요청_상태_변경_성공() {
         // given
@@ -49,13 +54,13 @@ public class LeaveRequestServiceTest extends UnitTest {
         when(leaveRequestFindDao.findById(any())).thenReturn(leaveRequest);
 
         // when
-        final LeaveRequest updatedLeaveRequest = leaveRequestService.updateLeaveRequestStatus(any(), requestDto);
+        final LeaveRequest updatedLeaveRequest = leaveRequestService.updateLeaveRequestStatus(1L, requestDto);
 
         // then
         assertThat(leaveRequest.getStatus()).isEqualTo(updatedLeaveRequest.getStatus());
     }
 
-    @Description("연차 요청 상태 변경 실패 - 이미 확정된 상태")
+    @Description("연차 요청 상태 변경 실패 - 이미 확정(승인 또는 거절)된 상태")
     @Test
     void 연차_요청_상태_변경_실패() {
         // given
@@ -66,6 +71,44 @@ public class LeaveRequestServiceTest extends UnitTest {
 
         // when, then
         assertThrows(StatusAlreadyExistsException.class, () ->
-                leaveRequestService.updateLeaveRequestStatus(any(), requestDto));
+                leaveRequestService.updateLeaveRequestStatus(1L, requestDto));
+    }
+
+    @Description("연차 요청 취소 성공")
+    @Test
+    void 연차_요청_취소_성공() {
+        // given
+        final Member member = Member.builder().build();
+        final LeaveRequestStatusRequest requestDto = LeaveRequestStatusRequestBuilder.build(Status.CANCELED);
+        final LeaveRequest leaveRequest = LeaveRequestBuilder.build(Status.PENDING);
+
+        leaveRequest.updateMember(member);
+
+        when(memberFindDao.findById(any())).thenReturn(member);
+        when(leaveRequestFindDao.findById(any())).thenReturn(leaveRequest);
+
+        // when
+        final LeaveRequest updateLeaveRequest = leaveRequestService.cancelLeaveRequest("shiftM", 1L, requestDto);
+
+        // then
+        assertThat(updateLeaveRequest.getStatus()).isEqualTo(Status.CANCELED);
+    }
+
+    @Description("연차 요청 취소 실패 - 이미 확정(승인, 거절, 취소)된 상태")
+    @Test
+    void 연차_요청_취소_실패() {
+        // given
+        final Member member = Member.builder().build();
+        final LeaveRequestStatusRequest requestDto = LeaveRequestStatusRequestBuilder.build(Status.PENDING);
+        final LeaveRequest leaveRequest = LeaveRequestBuilder.build(Status.CANCELED);
+
+        leaveRequest.updateMember(member);
+
+        when(memberFindDao.findById(any())).thenReturn(member);
+        when(leaveRequestFindDao.findById(any())).thenReturn(leaveRequest);
+
+        // when, then
+        assertThrows(StatusAlreadyExistsException.class, () ->
+                leaveRequestService.cancelLeaveRequest("shiftM", 1L, requestDto));
     }
 }

@@ -84,20 +84,23 @@ public class LeaveRequestService {
     }
 
     @Transactional
-    public void updateLeaveRequest(final String memberId, final Long leaveRequestId, final LeaveRequestStatusRequest request) {
+    public LeaveRequest cancelLeaveRequest(final String memberId, final Long leaveRequestId,
+                                           final LeaveRequestStatusRequest request) {
         final Member member = memberFindDao.findById(memberId);
 
-        final LeaveRequest leaveRequest = findById(leaveRequestId);
+        final LeaveRequest leaveRequest = leaveRequestFindDao.findById(leaveRequestId);
 
         if (member != leaveRequest.getMember()) {
             throw new LeaveRequestNotAuthorException(ErrorCode.LEAVE_REQUEST_NOT_AUTHOR);
         }
 
-        if (leaveRequest.getStatus() != Status.PENDING || leaveRequest.getStatus() != Status.CANCELED) {
-            throw new LeaveRequestUpdateFailedException(ErrorCode.LEAVE_REQUEST_UPDATE_FAILED);
+        if (leaveRequest.getStatus() != Status.PENDING) {
+            throw new StatusAlreadyExistsException();
         }
 
         leaveRequest.updateStatus(request.status());
+
+        return leaveRequest;
     }
 
     @Transactional(readOnly = true)

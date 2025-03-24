@@ -36,15 +36,18 @@ public class LeaveRequestController {
         final Page<LeaveRequest> leaveRequests = leaveRequestService.getRequestLeaveInfos(memberId, pageable);
 
         final List<LeaveRequestResponse> content = leaveRequests.getContent().stream()
-                .map(LeaveRequestResponse::new)
+                .map(LeaveRequestResponse::of)
                 .toList();
 
         return new LeaveRequestListResponse(content, page, size, leaveRequests.getTotalPages(), leaveRequests.getTotalElements());
     }
 
     @PatchMapping("/{leaveRequestId}")
-    public void updateLeaveRequest(@AuthId final String memberId, @PathVariable("leaveRequestId") final Long leaveRequestId,
-                                   @Valid @RequestBody final LeaveRequestStatusRequest requestDto) {
-        leaveRequestService.updateLeaveRequest(memberId, leaveRequestId, requestDto);
+    public LeaveRequestResponse cancelLeaveRequest(@AuthId final String memberId,
+                                                   @PathVariable("leaveRequestId") final Long leaveRequestId,
+                                                   @Valid @RequestBody final LeaveRequestStatusRequest requestDto) {
+        final LeaveRequest leaveRequest = leaveRequestService.cancelLeaveRequest(memberId, leaveRequestId, requestDto);
+
+        return LeaveRequestResponse.of(leaveRequest);
     }
 }

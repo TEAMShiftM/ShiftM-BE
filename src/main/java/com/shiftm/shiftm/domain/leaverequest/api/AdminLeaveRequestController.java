@@ -30,7 +30,7 @@ public class AdminLeaveRequestController {
         final Page<LeaveRequest> leaveRequests = leaveRequestService.getAllLeaveRequests(pageable);
 
         final List<LeaveRequestResponse> content = leaveRequests.getContent().stream()
-                .map(LeaveRequestResponse::new)
+                .map(LeaveRequestResponse::of)
                 .toList();
 
         return new LeaveRequestListResponse(content, page, size, leaveRequests.getTotalPages(), leaveRequests.getTotalElements());
@@ -45,7 +45,7 @@ public class AdminLeaveRequestController {
         final Page<LeaveRequest> leaveRequests = leaveRequestService.getLeaveRequest(memberId, pageable);
 
         final List<LeaveRequestResponse> content = leaveRequests.getContent().stream()
-                .map(LeaveRequestResponse::new)
+                .map(LeaveRequestResponse::of)
                 .toList();
 
         return new LeaveRequestListResponse(content, page, size, leaveRequests.getTotalPages(), leaveRequests.getTotalElements());
