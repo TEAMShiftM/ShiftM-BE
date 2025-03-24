@@ -2,7 +2,7 @@ package com.shiftm.shiftm.domain.leaverequest.api;
 
 import com.shiftm.shiftm.domain.leaverequest.domain.LeaveRequest;
 import com.shiftm.shiftm.domain.leaverequest.dto.request.RequestLeaveRequest;
-import com.shiftm.shiftm.domain.leaverequest.dto.request.UpdateLeaveRequestRequest;
+import com.shiftm.shiftm.domain.leaverequest.dto.request.LeaveRequestStatusRequest;
 import com.shiftm.shiftm.domain.leaverequest.dto.response.LeaveRequestListResponse;
 import com.shiftm.shiftm.domain.leaverequest.dto.response.LeaveRequestResponse;
 import com.shiftm.shiftm.domain.leaverequest.service.LeaveRequestService;
@@ -44,7 +44,7 @@ public class LeaveRequestController {
 
     @PatchMapping("/{leaveRequestId}")
     public void updateLeaveRequest(@AuthId final String memberId, @PathVariable("leaveRequestId") final Long leaveRequestId,
-                                   @Valid @RequestBody final UpdateLeaveRequestRequest requestDto) {
+                                   @Valid @RequestBody final LeaveRequestStatusRequest requestDto) {
         leaveRequestService.updateLeaveRequest(memberId, leaveRequestId, requestDto);
     }
 }

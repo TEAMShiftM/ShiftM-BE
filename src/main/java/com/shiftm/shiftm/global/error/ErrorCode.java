@@ -39,6 +39,7 @@ public enum ErrorCode {
     LEAVE_REQUEST_NOT_AUTHOR(401, "LVR002", "Not the author."),
     LEAVE_REQUEST_UPDATE_FAILED(400, "LVR003", "Leave request Update failed."),
     LEAVE_REQUEST_NOT_FOUND(404, "LVR004", "Leave request Not Found"),
+    STATUS_ALREADY_EXISTS(400, "LVR005", "Leave request status already exists"),
 
     /* SHIFT ERROR */
     CHECKIN_ALREADY_EXISTS(404, "SHIFT001", "Checkin Is Already Exists"),

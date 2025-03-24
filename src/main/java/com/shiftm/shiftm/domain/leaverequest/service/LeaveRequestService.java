@@ -5,11 +5,9 @@ import com.shiftm.shiftm.domain.leave.repository.LeaveRepository;
 import com.shiftm.shiftm.domain.leaverequest.domain.LeaveRequest;
 import com.shiftm.shiftm.domain.leaverequest.domain.enums.Status;
 import com.shiftm.shiftm.domain.leaverequest.dto.request.RequestLeaveRequest;
-import com.shiftm.shiftm.domain.leaverequest.dto.request.UpdateLeaveRequestRequest;
-import com.shiftm.shiftm.domain.leaverequest.exception.LeaveNotEnoughException;
-import com.shiftm.shiftm.domain.leaverequest.exception.LeaveRequestNotAuthorException;
-import com.shiftm.shiftm.domain.leaverequest.exception.LeaveRequestNotFoundException;
-import com.shiftm.shiftm.domain.leaverequest.exception.LeaveRequestUpdateFailedException;
+import com.shiftm.shiftm.domain.leaverequest.dto.request.LeaveRequestStatusRequest;
+import com.shiftm.shiftm.domain.leaverequest.exception.*;
+import com.shiftm.shiftm.domain.leaverequest.repository.LeaveRequestFindDao;
 import com.shiftm.shiftm.domain.leaverequest.repository.LeaveRequestRepository;
 import com.shiftm.shiftm.domain.member.domain.Member;
 import com.shiftm.shiftm.domain.member.repository.MemberFindDao;
@@ -28,6 +26,7 @@ import java.util.List;
 @Service
 public class LeaveRequestService {
 
+    private final LeaveRequestFindDao leaveRequestFindDao;
     private final MemberFindDao memberFindDao;
     private final LeaveRepository leaveRepository;
     private final LeaveRequestRepository leaveRequestRepository;
@@ -85,7 +84,7 @@ public class LeaveRequestService {
     }
 
     @Transactional
-    public void updateLeaveRequest(final String memberId, final Long leaveRequestId, final UpdateLeaveRequestRequest request) {
+    public void updateLeaveRequest(final String memberId, final Long leaveRequestId, final LeaveRequestStatusRequest request) {
         final Member member = memberFindDao.findById(memberId);
 
         final LeaveRequest leaveRequest = findById(leaveRequestId);
@@ -114,20 +113,16 @@ public class LeaveRequestService {
     }
 
     @Transactional
-    public void updateLeaveRequestStatus(Long leaveRequestId, UpdateLeaveRequestRequest requestDto) {
-        final LeaveRequest leaveRequest = findById(leaveRequestId);
+    public LeaveRequest updateLeaveRequestStatus(final Long leaveRequestId, final LeaveRequestStatusRequest requestDto) {
+        final LeaveRequest leaveRequest = leaveRequestFindDao.findById(leaveRequestId);
 
-        final Double usedCount = leaveRequest.getLeave().getUsedCount();
-
-        if (leaveRequest.getStatus() != Status.APPROVED && requestDto.status() == Status.APPROVED) {
-            leaveRequest.getLeave().updateUsedCount(usedCount + leaveRequest.getCount());
-        }
-
-        if (leaveRequest.getStatus() == Status.APPROVED && requestDto.status() != Status.APPROVED) {
-            increaseLeaveCount(leaveRequest.getLeave(), leaveRequest.getCount());
+        if (leaveRequest.getStatus() != Status.PENDING) {
+            throw new StatusAlreadyExistsException();
         }
 
         leaveRequest.updateStatus(requestDto.status());
+
+        return leaveRequest;
     }
 
     private LeaveRequest findById(final Long leaveRequestId) {
